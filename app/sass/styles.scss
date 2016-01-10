@@ -1,0 +1,10 @@
+@import "colors";
+
+
+.main {
+  background-color: $blue;
+  opacity: .8;
+  &__about {
+    color: $grey;
+  }
+}

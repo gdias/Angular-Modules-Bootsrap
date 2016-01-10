@@ -1,0 +1,26 @@
+{
+  "name": "AngularModuleBootstrap",
+  "description": "This bootstrap can start an new Angular project",
+  "version": "0.0.1",
+  "main": "app.js",
+  "author": "Guillaume DIAS COELHO",
+  "devDependencies": {
+    "angular": "~1.5.0-rc.0",
+    "browser-sync": "^2.9.11",
+    "browserify": "~12.0",
+    "gulp": "latest",
+    "gulp-connect": "latest",
+    "gulp-imagemin": "^2.3.0",
+    "gulp-minify-css": "^1.2.3",
+    "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.1.1",
+    "gulp-sourcemaps": "^1.5.2",
+    "gulp-uglify": "^1.5.1",
+    "gulp-util": "^3.0.6",
+    "gulp-watch": "^4.3.3",
+    "jquery-browserify": "latest",
+    "lodash": "latest",
+    "vinyl-source-stream": "~1.1.0"
+  }
+}
