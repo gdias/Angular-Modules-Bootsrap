@@ -1,6 +1,8 @@
 "use strict";
 
-module.exports.categoryService = ['$http', function($http) {
+module.exports.categoryService = [
+  '$http',
+  function($http) {
 
        this.getAllCategory = function(){
            return $http.get('/api/category').then(handleSuccess, handleError);
@@ -19,4 +21,5 @@ module.exports.categoryService = ['$http', function($http) {
          console.log("ERROR : "+r.data);
        }
 
-}]
+  }
+]

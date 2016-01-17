@@ -8,3 +8,14 @@
     color: $grey;
   }
 }
+
+.menu {
+  ul {
+    list-style: none;
+    padding: 0;
+    li {
+      display: inline-block;
+      padding: 0 10px;
+    }
+  }
+}

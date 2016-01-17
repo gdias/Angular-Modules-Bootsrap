@@ -39,7 +39,7 @@ gulp.task('compress', function(){
 gulp.task('watch', function () {
   gulp.watch(['./app/**/*.js'], ['browserify']);
   gulp.watch(['./app/**/*.scss'], ['sass']);
-});
+})
 
 gulp.task('browserify', function() {
     return browserify('./app/app.js')

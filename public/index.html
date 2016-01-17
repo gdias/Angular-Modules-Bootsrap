@@ -9,16 +9,10 @@
 <body>
   <h1>Welcome on Bootstrap for Angular modules !</h1>
   <p>
-    Use "gulp" command for started an watch builder who generate js/main.js and css/styles.css files.
+    Use "gulp" command for started an watch builder who generate js/main.js and css/styles.css files. <br>
     If you have need minified versions, just use the command "gulp prod" for generate it.
   </p>
-
-  <div ng-controller="mainController" class="main">
-    Message (mainController) : {{message}}
-  </div>
-  <div ng-controller="aboutController">
-    Message (aboutController) : {{message}}
-  </div>
-
+  <div class="menu" ng-include src="'partials/commons/menu.html'"></div>
+  <div ng-view></div>
 </body>
 </html>
