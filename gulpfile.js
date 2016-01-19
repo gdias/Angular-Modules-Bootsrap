@@ -1,14 +1,25 @@
 "use strict";
 
-  var gulp = require('gulp')
-    , connect = require('gulp-connect')
-    , browserify = require('browserify')
-    , source = require('vinyl-source-stream')
-    , sass = require('gulp-sass')
-    , uglify = require('gulp-uglify')
-    , minify = require('gulp-minify-css')
-    , rename = require('gulp-rename')
+var gulp = require('gulp')
+  , connect = require('gulp-connect')
+  , browserify = require('browserify')
+  , source = require('vinyl-source-stream')
+  , sass = require('gulp-sass')
+  , uglify = require('gulp-uglify')
+  , minify = require('gulp-minify-css')
+  , rename = require('gulp-rename')
+  , notify = require("gulp-notify")
+  , plumber = require("gulp-plumber")
 
+// Error handler
+var reportError = function (error) {
+    notify({
+        title: ['Gulp Task Error : ', error.plugin].join(""),
+        message: error.message
+    }).write(error.message)
+
+    this.emit('end')
+}
 
 gulp.task('connect', function() {
   connect.server({
@@ -19,9 +30,28 @@ gulp.task('connect', function() {
 });
 
 gulp.task('sass', function(){
-  gulp.src('./app/sass/styles.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./public/css'));
+  return gulp.src('./app/sass/styles.scss')
+    .pipe(plumber({
+        errorHandler: reportError
+    }))
+    .pipe(sass())
+    .on('error', reportError)
+    .pipe(gulp.dest('./public/css'))
+    .pipe(connect.reload())
+
+})
+
+gulp.task('browserify', function() {
+  return browserify('./app/app.js')
+    .bundle()
+    .pipe(source('main.js'))
+    .pipe(gulp.dest('./public/js/'))
+    .pipe(connect.reload())
+})
+
+gulp.task('html', function(){
+  gulp.src("./public/*.html")
+    .pipe(connect.reload())
 })
 
 gulp.task('compress', function(){
@@ -37,16 +67,12 @@ gulp.task('compress', function(){
 })
 
 gulp.task('watch', function () {
-  gulp.watch(['./app/**/*.js'], ['browserify']);
-  gulp.watch(['./app/**/*.scss'], ['sass']);
+  gulp.watch(['./app/**/*.js'], ['browserify'])
+  gulp.watch(['./app/**/*.scss'], ['sass'])
+  gulp.watch(['./public/**/*.html'], ['html'])
+  //gulp.watch(['./app/*.html'], ['html'])
 })
 
-gulp.task('browserify', function() {
-    return browserify('./app/app.js')
-        .bundle()
-        .pipe(source('main.js'))
-        .pipe(gulp.dest('./public/js/'))
-})
 
 
 gulp.task('default', ['connect', 'watch', 'browserify', 'sass']);

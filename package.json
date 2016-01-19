@@ -4,6 +4,11 @@
   "version": "0.0.1",
   "main": "app.js",
   "author": "Guillaume DIAS COELHO",
+  "license": "(MIT OR Apache-2.0)",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/gdias/Angular-Modules-Bootsrap.git"
+  },
   "devDependencies": {
     "angular": "~1.5.0-rc.0",
     "angular-route": "^1.4.8",
@@ -14,6 +19,7 @@
     "gulp-imagemin": "^2.3.0",
     "gulp-minify-css": "^1.2.3",
     "gulp-notify": "^2.2.0",
+    "gulp-plumber": "^1.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^2.1.1",
     "gulp-sourcemaps": "^1.5.2",

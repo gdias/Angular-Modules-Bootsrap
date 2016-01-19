@@ -25,7 +25,7 @@ app.service('categoryService', categoryService)
 
 
 module.exports.mainController = ['$scope', '$http', function mainController ($scope, $http){
-  $scope.message = "Home content";
+  $scope.message = "Home content"
 }]
 
 module.exports.aboutController = ['$scope', '$http', function aboutController ($scope, $http){
