@@ -5,6 +5,8 @@ npm-debug.log*
 
 #dependencies
 node_modules
+bower_components
+data
 
 #npm
 .npm
