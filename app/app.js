@@ -1,20 +1,14 @@
 require('angular')
 var ngRoute = require('angular-route')
-var routes = require("./routes/routes.js").routes
+var routes = require("./routes/routes").routes
 
 var app = angular.module('app', ['ngRoute'])
-app.config(routes)
+    app.config(routes)
 
-var labelDirective = require("./directives/directives").labelDirective
-var categoryService = require("./services/services").categoryService
-var mainController = require("./controllers/controllers").mainController
-var aboutController = require("./controllers/controllers").aboutController
-var contactController = require("./controllers/controllers").contactController
+var homeController = require("./components/home/homeController").homeController
+var aboutController = require("./components/about/aboutController").aboutController
+var contactController = require("./components/contact/contactController").contactController
 
-app.controller('mainController', mainController)
+app.controller('homeController', homeController)
 app.controller('aboutController', aboutController)
 app.controller('contactController', contactController)
-
-app.directive('labelDirective', labelDirective)
-
-app.service('categoryService', categoryService)
