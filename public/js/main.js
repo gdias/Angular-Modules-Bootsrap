@@ -1,104 +1,67 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('angular')
 var ngRoute = require('angular-route')
-var routes = require("./routes/routes.js").routes
+var routes = require("./routes/routes").routes
 
 var app = angular.module('app', ['ngRoute'])
-app.config(routes)
+    app.config(routes)
 
-var labelDirective = require("./directives/directives").labelDirective
-var categoryService = require("./services/services").categoryService
-var mainController = require("./controllers/controllers").mainController
-var aboutController = require("./controllers/controllers").aboutController
-var contactController = require("./controllers/controllers").contactController
+var homeController = require("./components/home/homeController").homeController
+var aboutController = require("./components/about/aboutController").aboutController
+var contactController = require("./components/contact/contactController").contactController
 
-app.controller('mainController', mainController)
+app.controller('homeController', homeController)
 app.controller('aboutController', aboutController)
 app.controller('contactController', contactController)
 
-app.directive('labelDirective', labelDirective)
-
-app.service('categoryService', categoryService)
-
-},{"./controllers/controllers":2,"./directives/directives":3,"./routes/routes.js":4,"./services/services":5,"angular":9,"angular-route":7}],2:[function(require,module,exports){
+},{"./components/about/aboutController":2,"./components/contact/contactController":3,"./components/home/homeController":4,"./routes/routes":5,"angular":9,"angular-route":7}],2:[function(require,module,exports){
 "use strict"
 
-
-module.exports.mainController = ['$scope', '$http', function mainController ($scope, $http){
-  $scope.message = "Home content"
-}]
-
 module.exports.aboutController = ['$scope', '$http', function aboutController ($scope, $http){
-  $scope.message = "About content";
-}]
+  $scope.message = "About content"
 
-module.exports.contactController = ['$scope', '$http', function contactController ($scope, $http){
-  $scope.message = "Contact content";
 }]
 
 },{}],3:[function(require,module,exports){
-"use strict";
+"use strict"
 
-module.exports.labelDirective = function(){
-    return{
-        restrict: 'E', //Element (Tag)
-        template:
-            '<span class="label label-info">{{cat.Name}}</span>'
-    };
-}
+module.exports.contactController = ['$scope', '$http', function contactController ($scope, $http){
+  $scope.message = "Contact content"
+  
+}]
 
 },{}],4:[function(require,module,exports){
+"use strict"
+
+module.exports.homeController = ['$scope', '$http', function homeController ($scope, $http){
+  $scope.message = "Welcome here !"
+
+}]
+
+},{}],5:[function(require,module,exports){
 "use strict";
 
 
 module.exports.routes = [
   '$routeProvider',
   function($routeProvider) {
-
-        // Système de routage
-        $routeProvider
-        .when('/home', {
-            templateUrl: 'partials/home.html',
-            controller: 'mainController'
-        })
-        .when('/about', {
-            templateUrl: 'partials/about.html',
-            controller: 'aboutController'
-        })
-        .when('/contact', {
-            templateUrl: 'partials/contact.html',
-            controller: 'contactController'
-        })
-        .otherwise({
-            redirectTo: '/home'
-        });
-  }
-]
-
-},{}],5:[function(require,module,exports){
-"use strict";
-
-module.exports.categoryService = [
-  '$http',
-  function($http) {
-
-       this.getAllCategory = function(){
-           return $http.get('/api/category').then(handleSuccess, handleError);
-       }
-
-       this.getOneCat = function(id, p) {
-          p = ['/api/category/',id].join("")
-          return $http.get(p).then(handleSuccess, handleError);
-       }
-
-       function handleSuccess(r) {
-         return r.data;
-       }
-
-       function handleError(r) {
-         console.log("ERROR : "+r.data);
-       }
-
+    // Router
+    $routeProvider
+    .when('/home', {
+        templateUrl: 'partials/home.html',
+        controller: 'homeController'
+    })
+    .when('/about', {
+        templateUrl: 'partials/about.html',
+        controller: 'aboutController'
+    })
+    .when('/contact', {
+        templateUrl: 'partials/contact.html',
+        controller: 'contactController'
+    })
+    .otherwise({
+        redirectTo: '/home'
+    });
   }
 ]
 

@@ -1,21 +1,17 @@
 @import "colors";
 @import "helpers";
 
-.main {
-  background-color: $blue;
-  opacity: .8;
-  &__about {
-    color: $grey;
+.container {
+  padding-top: 80px;
+}
+
+nav {
+  .nav {
+    float: right;
+    margin-right: 50px;
   }
 }
 
-.menu {
-  ul {
-    list-style: none;
-    padding: 0;
-    li {
-      display: inline-block;
-      padding: 0 10px;
-    }
-  }
-}
+h1 { color: $m_green; }
+h3 { text-transform: uppercase;}
+legend {font-weight: bold;}

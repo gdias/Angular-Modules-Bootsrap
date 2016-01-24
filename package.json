@@ -31,9 +31,11 @@
     "angular-route": "^1.4.8",
     "browser-sync": "^2.9.11",
     "browserify": "~12.0",
+    "connect-livereload": "^0.5.4",
     "gulp": "latest",
     "gulp-connect": "latest",
     "gulp-imagemin": "^2.3.0",
+    "gulp-livereload": "^3.8.1",
     "gulp-minify-css": "^1.2.3",
     "gulp-notify": "^2.2.0",
     "gulp-plumber": "^1.0.1",
@@ -45,6 +47,7 @@
     "gulp-watch": "^4.3.3",
     "jquery-browserify": "latest",
     "lodash": "latest",
+    "tiny-lr": "^0.2.1",
     "vinyl-source-stream": "~1.1.0"
   }
 }

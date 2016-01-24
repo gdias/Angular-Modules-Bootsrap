@@ -5,11 +5,9 @@
 var express  = require('express'),
       exphbs = require('express-handlebars'),
       app  = express(),
-      port = process.env.PORT || 9090,
       mongoose = require('mongoose'),
       passport = require('passport'),
-      flash = require('connect-flash'),
-      welcomeServer = ["The Express Server is started on ",port," port"].join("")
+      flash = require('connect-flash')
 
 var morgan = require('morgan'),
       cookieParser = require('cookie-parser'),
@@ -18,36 +16,34 @@ var morgan = require('morgan'),
 
 var configDB = require('./config/database')
 
+module.exports = function(path, port, welcome) {
+
 // ========== Configuration Server & connect to MongoDB
+  welcome = ["The Express Server is started on ",port," port"].join("")
 
-// configure Mongoose driver (mongoDB)
-mongoose.connect(configDB.url)
+  // configure Mongoose driver (mongoDB)
+  mongoose.connect(configDB.url)
 
-// configure Express
-app.use(morgan('dev'))
-app.use(cookieParser())
-app.use(bodyParser())
+  // configure Express
+  app.use(morgan('dev'))
+  app.use(cookieParser())
+  app.use(bodyParser())
 
-// configure template engine
-var hbs = exphbs.create({
-  layoutsDir : "./server/views",
-  partialsDir : "./server/views/layouts",
-  defaultLayout: 'template',
-  extname: '.hbs'
-})
+  // statics file (SPA)
+  app.use(express.static(path))
 
-app.engine('hbs', hbs.engine)
-app.set('view engine', 'hbs')
-app.set('views', './server/views')
-// required for passport
-app.use(session({ secret: 'ihaveanheartasallpeoplearoundme' }))
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(flash())
+  // ========== API Routes
+  app.use('/api',require('./routes'))
 
-// ========== Routes
-require('./routes')(app, passport)
+  // required for passport
+  app.use(session({ secret: 'ihaveanheartasallpeoplearoundme' }))
+  app.use(passport.initialize())
+  app.use(passport.session())
+  app.use(flash())
 
-// ========== Start Server
-app.listen(port)
-console.log(welcomeServer)
+  // ========== Start Server
+  app.listen(port)
+
+  console.log(welcome)
+
+}

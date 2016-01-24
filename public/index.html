@@ -2,13 +2,16 @@
 <html lang="en" ng-app="app">
 <head>
   <meta charset="UTF-8">
-  <title>Bootstrap Browserify / AngularJS / Sass</title>
+  <title>Bootstrap Browserify / AngularJS / Sass / Express</title>
   <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/styles.min.css">
+  <link rel="stylesheet" href="css/styles.css">
   <script src="js/main.js" charset="utf-8"></script>
 </head>
 <body>
-  <div class="menu" ng-include src="'partials/commons/menu.html'"></div>
-  <div ng-view></div>
+  
+  <div class="container">
+    <div class="menu" ng-include src="'partials/commons/menu.html'"></div>
+    <div ng-view></div>
+  </div>
 </body>
 </html>

@@ -1,35 +1,30 @@
 "use strict"
 
-module.exports = function(app, passport) {
+var express = require('express')
+var router = express.Router()
 
-    // homepage
-    app.get('/', function(req, res) {
-          res.render( 'template')
-    })
-/*
-    app.get('/signin', function(req, res) {
-          res.render('signin.hbs', { message: req.flash('signinMessage') })
-    })
+// middleware
+router.use(function timeLog(req, res, next) {
+  console.log('Time: ', Date.now())
+  next()
+})
 
-    app.get('/signup', function(req, res) {
-          res.render('signup.hbs', { message: req.flash('signupMessage') })
-    })
+// API Routes
+router.get('/user', function(req, res) {
+  res.send('Users data')
+})
 
-    app.get('/account', isLoggedIn, function(req, res) {
-        res.render("account.hbs", {username : req.username})
-    })
-*/
-    app.get("/logout", function(req, res){
-      req.logout()
-      res.redirect("/")
-    })
+router.get('/catalog', function(req, res) {
+  res.send('catalog data')
+})
 
-}
-
+// middleware for auth (passport)
 function isLoggedIn(req, res, next) {
-
   if (req.isAuthenticated())
     return next()
 
   res.redirect('/') // if unauthenticated
 }
+
+
+module.exports = router
