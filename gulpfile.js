@@ -19,7 +19,7 @@ var gulp = require('gulp')
 // Error handler
 var reportError = function (error) {
     notify({
-        title: ['Gulp Task Error : ', error.plugin].join(""),
+        title: ['Gulp Task Error : ', error.plugin, " | Error ", error].join(""),
         message: error.message
     }).write(error.message)
 
@@ -35,8 +35,6 @@ var startLivereload = function() {
 
 var notifyLivereload = function(event, fileName) {
     fileName = require('path').relative(EXPRESS_ROOT, event.path)
-
-    console.log("bar : ",fileName)
 
     lr.changed({
       body: {
@@ -64,6 +62,7 @@ gulp.task('sass', function(){
 gulp.task('browserify', function() {
   return browserify('./app/app.js')
     .bundle()
+    .on('error', reportError)
     .pipe(source('main.js'))
     .pipe(gulp.dest('./public/js/'))
 })
@@ -71,11 +70,13 @@ gulp.task('browserify', function() {
 gulp.task('compress', function(){
   gulp.src('./public/js/main.js')
     .pipe(uglify())
+    .on('error', reportError)
     .pipe(rename("main.min.js"))
     .pipe(gulp.dest('./public/js/'))
 
   gulp.src('./public/css/styles.css')
     .pipe(minify())
+    .on('error', reportError)
     .pipe(rename("styles.min.css"))
     .pipe(gulp.dest('./public/css/'))
 })

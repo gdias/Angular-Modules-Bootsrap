@@ -8,9 +8,8 @@
   <script src="js/main.js" charset="utf-8"></script>
 </head>
 <body>
-  
   <div class="container">
-    <div class="menu" ng-include src="'partials/commons/menu.html'"></div>
+    <div class="menu" ng-include src="'partials/commons/menu.html'" ng-controller="menuController"></div>
     <div ng-view></div>
   </div>
 </body>
