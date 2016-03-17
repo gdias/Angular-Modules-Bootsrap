@@ -9,7 +9,7 @@ var checkLoggedin = function($q, $timeout, $http, $location, $rootScope, $cookie
     method: 'GET'
     , url: '/api/auth'
     , headers: {
-      'Authorization': ['Bearer ',token].join("")
+      'Authorization': ['Bearer ', token].join("")
     }
   }).success(function(user){
     if (user !== '0'){

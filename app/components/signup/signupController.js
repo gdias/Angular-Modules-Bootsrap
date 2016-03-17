@@ -1,30 +1,29 @@
 "use strict"
-var jwt = require("jsonwebtoken")
 
-module.exports.signupController = ['$scope', '$http', function signupController ($scope, $http){
+var jwt = require("jsonwebtoken")
+//var signupService = require("./signupService").signupService
+
+module.exports.signupController = ['$scope', '$http', 'signupService',
+function signupController ($scope, $http, signupService){
   $scope.message = "Inscription"
 
   $scope.form = {}
 
-  //console.log("email : ",signUPform.email.value);
+  $scope.checkEmailExist = function(){
 
-  // signUPform.email.blur = function() {
-  //
-  // }
+    //console.log("send this email : ", $scope.form.email);
+    //  console.log("signupService : ",signupService);
+    if (!!$scope.form.email)
+      signupService.checkIfEmailExist($scope.form.email)
+    //console.log("exist",exist);
+    //console.log("email exist",exist);
+  }
 
-  //console.log("email model : ", $scope.form.email);
-  //var log = ($scope.form.email.indexOf("@") != -1 ? $scope.form.email.substr(0, $scope.form.email.indexOf("@")) : "")
-
-  // $scope.form.log = log
 
   $scope.signUpUser = function(){
-    //console.log(e)
-    //e.preventDefault()
 
-    console.log("form signUpUser",$scope.form);
-
-    $http.post("/api/user", $scope.form).then(function(data){
-      console.log("token ",data);
+    $http.post("/api/user", $scope.form).then(function(response){
+      console.log("token ",response.data.token);
 
     }, function(err){
       console.log(err);

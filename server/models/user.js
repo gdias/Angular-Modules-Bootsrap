@@ -8,9 +8,11 @@ UserShema = new Schema({
       email: String
     , username : String
     , pass : String
-    , datetime : String
     , lastConnection : String
+    , startDate : String
     , active : Boolean
+    , level : Number
+    , hash : String
 })
 
 module.exports = mongoose.model('User', UserShema)

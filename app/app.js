@@ -13,6 +13,7 @@ var homeController = require("./components/home/homeController").homeController
   , signupController = require("./components/signup/signupController").signupController
   , accountController = require("./components/account/accountController").accountController
   , menuController = require("./shared/menu/menuController").menuController
+  , signupService = require("./components/signup/signupService").signupService
 
 
 app.controller('homeController', homeController)
@@ -24,3 +25,5 @@ app.controller('signinController', signinController)
 app.controller('signupController', signupController)
 
 app.controller('accountController', accountController)
+
+app.service('signupService', signupService)

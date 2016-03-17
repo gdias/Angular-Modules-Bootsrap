@@ -11,6 +11,7 @@ var gulp = require('gulp')
   , notify = require("gulp-notify")
   , plumber = require("gulp-plumber")
   , express = require('express')
+  , nodemon = require('gulp-nodemon')
   , lr
   , EXPRESS_ROOT = [__dirname, "/public"].join("")
   , EXPRESS_PORT = 8080
@@ -44,7 +45,19 @@ var notifyLivereload = function(event, fileName) {
 
 }
 
+
 gulp.task('connect', function() {
+  require("./server/server")(EXPRESS_ROOT, EXPRESS_PORT)
+  startLivereload()
+});
+
+
+gulp.task('start', function() {
+  nodemon({
+    script: './server/server.js'
+  , ext: 'js html'
+  , env: { 'NODE_ENV': 'development' }
+  })
   require("./server/server")(EXPRESS_ROOT, EXPRESS_PORT)
   startLivereload()
 });
@@ -87,6 +100,6 @@ gulp.task('watch', function () {
   gulp.watch(['./server/server.js', './public/**/*.html', './public/js/main.js', './public/css/styles.css'], notifyLivereload)
 })
 
-gulp.task('default', ['connect', 'watch', 'browserify', 'sass']);
+gulp.task('default', ['start', 'watch', 'browserify', 'sass']);
 
 gulp.task('prod', ['browserify', 'sass', 'compress'])

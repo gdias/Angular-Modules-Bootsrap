@@ -9,7 +9,7 @@
   <form ng-submit="signUpUser()" name="signUPform">
     <span class="error" ng-show="myForm.input.$error.required">Required!</span>
     <div>
-      <input type="text" placeholder="email" ng-model="form.email" name="email" required>
+      <input type="email" placeholder="email" ng-model="form.email" name="email" ng-blur="checkEmailExist()" required>
     </div>
     <div>
       <input type="password" placeholder="Password" ng-model="form.pwd" name="pwd" required>
