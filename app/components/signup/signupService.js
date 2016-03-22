@@ -4,7 +4,7 @@
 
 module.exports.signupService = ["$http", "$q",
     function($http, $q){
-        var apiurl = "//localhost:8181"
+        //var apiurl = "//localhost:8181"
         this.checkIfEmailExist = function(email) {
             return $http.post('/api/verify/email', {"email" : email}).then(handleSuccess, handleError)
         }

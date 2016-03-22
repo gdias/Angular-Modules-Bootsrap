@@ -1,0 +1,22 @@
+<div ng-hide="form.hide" clas="ng-show">
+
+</div>
+<div ng-show="form.show" class="ng-hide">
+  This page allow you to change your password.
+  <form ng-submit="sendNewPass()">
+    <input type="password" ng-model = "form.pass" placeholder="New password" required />
+    <input type="password" ng-model = "form.passconfirm" placeholder="New password" required />
+    <input type="hidden" ng-model = "form.hash" value="{{hash}}" />
+    <a href="#" ng-click="showPass()">show the password</a>
+    <input type="submit" value="Renew password">
+  </form>
+
+  <br>
+  Send form for change password with new token
+  <br>
+  Valid server and change data
+  <br>
+  Show message
+
+
+</div>

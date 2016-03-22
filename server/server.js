@@ -7,45 +7,43 @@ var express      = require('express')
   , app          = express()
   , passport     = require('passport')
   , flash        = require('connect-flash')
-
-var morgan       = require('morgan')
+  , morgan       = require('morgan')
   , cookieParser = require('cookie-parser')
   , bodyParser   = require('body-parser')
   , session      = require('express-session')
-
-var expressJWT   = require("express-jwt")
+  , expressJWT   = require("express-jwt")
   , jwt          = require("jsonwebtoken")
 
 
-module.exports = function(path, port, welcome, db, parent) {
+module.exports = function(path, port, welcome, db, parent, APIpathRoute) {
 
 // ========== Configuration Server & connect to MongoDB
   welcome = ["The Express Server is started on ",port," port"].join("")
-  //console.log([__dirname, "../public"].join(""));
   parent = __dirname.substring(0, __dirname.lastIndexOf("/"))
   path = [parent, "/public"].join("")
-  //console.log("path : ",path);
   port = 8080
-
-  // configure Mongoose driver (mongoDB)
 
   // configure Express
   app.use(morgan('dev'))
   app.use(cookieParser())
-  app.use(bodyParser())
+  app.use(bodyParser.json())
 
   // statics file (SPA)
   app.use(express.static(path))
 
-  var arrayPaths = [
-        "/api/auth"
-      , "/api/verify/email"
-      , "/api/user"
-      , "/api/users"
-    ]
+  // Auth routes api
+  APIpathRoute = [
+      "/api/auth"
+    , "/api/user/authnewpass"
+    , "/api/user/renewpass"
+    , "/api/verify/email"
+    , "/api/user/validate"
+    , "/api/user"
+    , "/api/users"
+  ]
 
   // API secured
-//  app.use(expressJWT({secret:"ilovecats"}).unless({path:arrayPaths}))
+  app.use(expressJWT({secret:"ilovecats"}).unless({path:APIpathRoute}))
   app.use('/api',require('./routes'))
 
   // required for passport
@@ -55,7 +53,7 @@ module.exports = function(path, port, welcome, db, parent) {
   // app.use(flash())
   //
   // app.use(bodyParser.urlencoded({ extended: true }))
-  // app.use(bodyParser.json())
+
 
   // ========== Start Server
   app.listen(port)

@@ -12,8 +12,11 @@ var homeController = require("./components/home/homeController").homeController
   , contactController = require("./components/contact/contactController").contactController
   , signinController = require("./components/signin/signinController").signinController
   , signupController = require("./components/signup/signupController").signupController
+  , validateAccountController = require("./components/signup/signupController").validateAccountController
   , accountController = require("./components/account/accountController").accountController
   , menuController = require("./shared/menu/menuController").menuController
+  , renewController = require("./components/signin/signinController").renewController
+  , renewValidController = require("./components/signin/signinController").renewValidController
   , signupService = require("./components/signup/signupService").signupService
 
 
@@ -24,6 +27,9 @@ app.controller('contactController', contactController)
 
 app.controller('signinController', signinController)
 app.controller('signupController', signupController)
+app.controller('validateAccountController', validateAccountController)
+app.controller('renewController', renewController)
+app.controller('renewValidController', renewValidController)
 
 app.controller('accountController', accountController)
 
@@ -71,20 +77,87 @@ module.exports.homeController = ['$scope', '$http', function homeController ($sc
 },{}],6:[function(require,module,exports){
 "use strict"
 
+var validEmail = require('../../../server/utils').validEmail
+  , jwt = require("jsonwebtoken")
+
+
+module.exports.renewController = ['$scope', '$http', '$window', '$cookies', '$location', '$rootScope',
+  function renewController ($scope, $http, $window, $cookies, $location, $rootScope){
+
+    $scope.form = {}
+
+    $scope.renew = function(testEmail) {
+      testEmail = new validEmail
+
+      if (!!testEmail.control($scope.form.mail)) {
+        console.log("post email : ", $scope.form.mail);
+        $http.post(
+          "/api/user/renewPassword"
+          , {
+              email : $scope.form.mail
+            , step : 1
+          }
+        ).then(function(response){
+          console.log(response);
+          if (!response.data.error){
+            console.log();
+          }
+        })
+
+        // TODO : return token by mail, with email in parameter
+
+      }
+
+      //console.log("to send this adress", $scope.form.mail)
+    }
+
+  }
+]
+
+
+module.exports.renewValidController = ['$scope', '$http', '$routeParams',
+  function renewValidController($scope, $http, $routeParams, token) {
+
+    if (!!$routeParams.token){
+      token = $routeParams.token
+      console.log("token : ",token);
+      $http({method: 'GET', url: '/api/authnewpass', headers: {
+          'Authorization': ['Bearer ',token].join("")}
+      }).then(authOk, authNok)
+
+      function authOk() {
+        // show form
+        console.log("show the form");
+
+
+      }
+
+      function authNok() {
+        console.error("Auth for change password has failed")
+      }
+      //var testDecode = jwt.verify(token)
+      //console.log("tokenize :: ",testDecode);
+
+    //   location.hash.split(",")
+    }
+
+  }
+]
+
+
 module.exports.signinController = ['$scope', '$http', '$window', '$cookies', '$location', '$rootScope',
 function signinController ($scope, $http, $window, $cookies, $location, $rootScope){
 
-  $scope.message = "Identification"
+  $scope.message = "Authentication"
   $scope.form = {}
   $scope.form.persist = true
 
   function authOk(){
     // get a localStorage with token
-
     $rootScope.auth = true
 
     if (!!$scope.form.persist)
-      $cookies.put("jwt-token",window.localStorage.getItem('token')) // save token
+      $cookies.put("jwt-token", window.localStorage.getItem('token')) // save token
 
     // redirection vers une page securisée
     $location.url('/account')
@@ -105,9 +178,8 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
             'Authorization': ['Bearer ',response.data].join("")}
         }).then(authOk, authNok)
 
-
       } else {
-          console.log("Error ",response.data.error)
+          $scope.error = response.data.error
       }
     })
   }
@@ -115,7 +187,7 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
 
 }]
 
-},{}],7:[function(require,module,exports){
+},{"../../../server/utils":257,"jsonwebtoken":238}],7:[function(require,module,exports){
 "use strict"
 
 var jwt = require("jsonwebtoken")
@@ -140,9 +212,13 @@ function signupController ($scope, $http, signupService){
 
   $scope.signUpUser = function(){
 
-    $http.post("/api/user", $scope.form).then(function(response){
+    $http.post("/api/user", $scope.form).then(function(response, validateUrl){
       console.log("token ",response.data.token);
 
+      if (!!response.data.token)
+        validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
+
+      console.log("use this url for validate your new account : ", validateUrl);
     }, function(err){
       console.log(err);
     })
@@ -151,6 +227,52 @@ function signupController ($scope, $http, signupService){
 
 }]
 
+module.exports.validateAccountController = ['$scope', '$http', '$routeParams', 'signupService',
+  function validateAccountController ($scope, $http, $routeParams, signupService){
+
+    if (!!$routeParams.token){
+      var token = $routeParams.token
+      $scope.form = {}
+      $scope.form.show = false
+      $scope.form.hide = true
+      $scope.showPass = function() {
+
+      }
+
+      $scope.sendNewPass = function() {
+
+      }
+
+      if (token)
+        $http({
+            method: 'GET'
+          , url: '/api/user/validate'
+          , headers: {
+            'Authorization': ['Bearer ',token].join("")
+          }
+        }).success(authOk).error(authNok)
+
+        function authOk (data, status, headers, config){
+          if (status === 200){
+            console.log(data.msg)
+          }
+          $scope.result = data.msg
+        }
+
+        function authNok(err) {
+          console.log("authNok");
+          if (err) throw err
+        }
+
+
+    }
+    // $http.post('/api/user/validate', {t : token}).then(function(rsp){
+    //   console.log("get response server ; ", rsp);
+    // })
+
+  }
+]
+
 },{"jsonwebtoken":238}],8:[function(require,module,exports){
 "use strict"
 
@@ -158,7 +280,7 @@ function signupController ($scope, $http, signupService){
 
 module.exports.signupService = ["$http", "$q",
     function($http, $q){
-        var apiurl = "//localhost:8181"
+        //var apiurl = "//localhost:8181"
         this.checkIfEmailExist = function(email) {
             return $http.post('/api/verify/email', {"email" : email}).then(handleSuccess, handleError)
         }
@@ -232,13 +354,29 @@ module.exports.routes = [
         , controller: 'contactController'
     })
     .when('/signin', {
-          templateUrl: 'partials/signin.html'
+          templateUrl: 'partials/auth/signin.html'
         , controller: 'signinController'
     })
     .when('/signup', {
-          templateUrl: 'partials/signup.html'
+          templateUrl: 'partials/auth/signup.html'
         , controller: 'signupController'
     })
+    .when('/validateAccount/:token', {
+          templateUrl: 'partials/auth/validateAccount.html'
+        //, controller: 'validateAccountController'
+    })
+    .when('/renewPassword/start', {
+          templateUrl: 'partials/auth/renew_start.html'
+    })
+    .when('/renewPassword/form', {
+          templateUrl: 'partials/auth/renew_form.html'
+        , controller: 'renewController'
+    })
+    .when('/renewPassword/valid/:token', {
+          templateUrl: 'partials/auth/renew_valid.html'
+        , controller: 'renewValidController'
+    })
+
     .when('/account', {
           templateUrl: 'partials/secure/account.html'
         , controller: 'accountController'
@@ -246,6 +384,7 @@ module.exports.routes = [
             loggedin: checkLoggedin
           }
     })
+
     .otherwise({
         redirectTo: '/home'
     })
@@ -54385,6 +54524,101 @@ function extend() {
     }
 
     return target
+}
+
+},{}],257:[function(require,module,exports){
+"use strict"
+
+module.exports.hash = function(self){
+
+  self.alpha = "abcdefghijklmnopqrstuvwxyz"
+  self.numeric = "1234567890"
+  self.uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+  self.getFloor = function (array){
+    return Math.floor(Math.random() * (!!array ? array.length : 10))
+  }
+
+  self.shuffle = function (array) {
+    var counter = array.length
+    while (counter > 0) {
+        var index = Math.floor(Math.random() * counter)
+        counter--
+
+        var temp = array[counter]
+        array[counter] = array[index]
+        array[index] = temp
+    }
+    return array
+}
+
+  return {
+      getAll : function(alphaArr, numArr, uppArr){
+        alphaArr = self.alpha.split("")
+        numArr = self.numeric.split("")
+        uppArr = self.uppercase.split("")
+
+        return [alphaArr, numArr, uppArr]
+      }
+    , generate : function() {
+        var all = this.getAll()
+        var arrFinal = []
+
+        all.forEach(getType)
+
+        function getType(type) {
+          for(var k = 0; k < 10; ++k)
+            arrFinal.push(type[self.getFloor(type)])
+        }
+
+        var hash = self.shuffle(arrFinal).join("")
+
+        return hash
+      }
+  }
+}(this)
+
+
+module.exports.validEmail = function(email, self) {
+
+  self = this
+  self.sizeMax = 50
+
+  self.testAt = function(email) {
+    return (email.indexOf("@") > 0 ? true : false)
+  }
+
+  self.testPoint = function(str) {
+    return (str.indexOf('.') > 0 ? true : false)
+  }
+
+  self.getDomain = function(email) {
+    return email.substring(email.indexOf("@"), email.length)
+  }
+
+  self.checkSize = function(email) {
+    return (email.length < self.sizeMax ? true : false)
+  }
+
+  self.error = function(msg) {
+    console.error(msg)
+    return false
+  }
+
+  self.control = function(email) {
+    if (!email || email === "" || !self.checkSize(email))
+      self.error("This input is not supported")
+
+    if (self.testAt(email)) {
+      var domain = self.getDomain(email)
+
+      return (self.testPoint(domain) > 0 ? email : false)
+    }
+    else
+      return false
+
+  }
+
 }
 
 },{}]},{},[1]);

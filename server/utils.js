@@ -24,10 +24,10 @@ module.exports.hash = function(self){
 }
 
   return {
-      getAll : function(){
-        var alphaArr = self.alpha.split("")
-        var numArr = self.numeric.split("")
-        var uppArr = self.uppercase.split("")
+      getAll : function(alphaArr, numArr, uppArr){
+        alphaArr = self.alpha.split("")
+        numArr = self.numeric.split("")
+        uppArr = self.uppercase.split("")
 
         return [alphaArr, numArr, uppArr]
       }

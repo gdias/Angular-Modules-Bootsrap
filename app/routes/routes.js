@@ -48,13 +48,29 @@ module.exports.routes = [
         , controller: 'contactController'
     })
     .when('/signin', {
-          templateUrl: 'partials/signin.html'
+          templateUrl: 'partials/auth/signin.html'
         , controller: 'signinController'
     })
     .when('/signup', {
-          templateUrl: 'partials/signup.html'
+          templateUrl: 'partials/auth/signup.html'
         , controller: 'signupController'
     })
+    .when('/validateAccount/:token', {
+          templateUrl: 'partials/auth/validateAccount.html'
+        //, controller: 'validateAccountController'
+    })
+    .when('/renewPassword/start', {
+          templateUrl: 'partials/auth/renew_start.html'
+    })
+    .when('/renewPassword/form', {
+          templateUrl: 'partials/auth/renew_form.html'
+        , controller: 'renewController'
+    })
+    .when('/renewPassword/valid/:token', {
+          templateUrl: 'partials/auth/renew_valid.html'
+        , controller: 'renewValidController'
+    })
+
     .when('/account', {
           templateUrl: 'partials/secure/account.html'
         , controller: 'accountController'
@@ -62,6 +78,7 @@ module.exports.routes = [
             loggedin: checkLoggedin
           }
     })
+
     .otherwise({
         redirectTo: '/home'
     })

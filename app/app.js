@@ -11,8 +11,11 @@ var homeController = require("./components/home/homeController").homeController
   , contactController = require("./components/contact/contactController").contactController
   , signinController = require("./components/signin/signinController").signinController
   , signupController = require("./components/signup/signupController").signupController
+  , validateAccountController = require("./components/signup/signupController").validateAccountController
   , accountController = require("./components/account/accountController").accountController
   , menuController = require("./shared/menu/menuController").menuController
+  , renewController = require("./components/signin/signinController").renewController
+  , renewValidController = require("./components/signin/signinController").renewValidController
   , signupService = require("./components/signup/signupService").signupService
 
 
@@ -23,6 +26,9 @@ app.controller('contactController', contactController)
 
 app.controller('signinController', signinController)
 app.controller('signupController', signupController)
+app.controller('validateAccountController', validateAccountController)
+app.controller('renewController', renewController)
+app.controller('renewValidController', renewValidController)
 
 app.controller('accountController', accountController)
 

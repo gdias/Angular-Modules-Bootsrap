@@ -1,19 +1,21 @@
 "use strict"
 
-var express = require('express')
-var router = express.Router()
-var jwt = require("jsonwebtoken")
-var expressJwt = require("express-jwt")
+var express     = require('express')
+  , router      = express.Router()
+  , jwt         = require("jsonwebtoken")
+  , expressJwt  = require("express-jwt")
+  , fs          = require("fs")
+  , db          = require("./database").db
+  , User        = require("./models/user")
+  , hash        = require('./utils').hash
+  , validEmail  = require('./utils').validEmail
+  , moment      = require('moment')
+  , bcrypt      = require('bcrypt-nodejs')
+  , nodemailer  = require('nodemailer')
+  , handlebars  = require('handlebars')
+  , key         = "ihaveanheartasallpeoplearoundme.yeah"
 
-var db = require("./database").db
-var User = require("./models/user")
-var hash = require('./utils').hash
-var validEmail = require('./utils').validEmail
 
-var moment = require('moment')
-
-var bcrypt = require('bcrypt-nodejs')
-var nodemailer = require('nodemailer')
 
 // middleware
 router.use(function timeLog(req, res, next) {
@@ -21,16 +23,12 @@ router.use(function timeLog(req, res, next) {
   next()
 })
 
-// auth
-
-
 // API Routes
 router.get('/', function(req, res) {
   res.json({api : 'API work !'})
 })
 
 router.post('/auth', function(req, res) {
-//  console.log("request  /auth ! : ",req.body);
 
   var em = req.body.email
   var pw = req.body.pwd
@@ -39,29 +37,40 @@ router.post('/auth', function(req, res) {
   User.find({email:em}, function (err, docs) {
 
       if(!!docs.length){
-      //  console.log("bcrypt : ",bcrypt.hashSync(docs[0].pass));
-      //  console.log(docs[0].pass);
         var passCrypted = (docs[0].pass.length < 10 ? bcrypt.hashSync(docs[0].pass) : docs[0].pass)
 
         if(bcrypt.compareSync(pw, passCrypted)) {
-          var token = jwt.sign({
-              expiresIn : "7d"
-            , username : req.body.email
-          }, "ilovecats")
-          res.json(token)
+
+          if (!!docs[0].active) {
+            var token = jwt.sign({
+                expiresIn : "7d"
+              , username : req.body.email
+            }, key)
+
+            res.json(token)
+          }
+          else
+            res.json({error:'Account not validated'})
+
         } else {
           res.json({error:'Bad password'})
         }
       } else {
-        res.json({error:'You can create an account'})
+        res.json({error:'Please, create an account'})
         // TODO : errorHandler
       }
   })
 
-  router.get('/auth', expressJwt({secret:"ilovecats"}), function(req, res) {
+  router.get('/auth', expressJwt({secret:key}), function(req, res) {
     //console.log("/get >",req.body)
     res.sendStatus(200)
   })
+
+})
+
+router.get('/test/email', function(req, res) {
+
+  res.json({code:200})
 })
 
 router.get('/users', function(req, res) {
@@ -88,21 +97,113 @@ router.post('/verify/email', function(req, res, email){
   }
 })
 
+router.get('/user/authnewpass', expressJwt({secret:key}), function(req, res, hash) {
+
+  console.log("data in token", req.user)
+  hash = (!!req.user.hash ? req.user.hash : false)
+
+  if (hash){
+    // get informations user
+    User.find({"hash": hash}, function(err, docs, user) {
+      if (!!err) throw err
+
+      if (!!docs) {
+        user = docs[0]
+
+        console.log("hash : ", hash);
+        console.log("email >  : ", user.email);
+
+        // get Hash and send new token
+        token = jwt.sign({
+            expiresIn : "1d"
+          , email : user.email
+          , hash : hash
+        }, key)
+
+        res.json({"token" : token})
+
+      }
+
+    })
+
+  }
+
+
+
+})
+
+
+router.post('/user/renewpass', function(req, res, emailControlled, verif){
+
+  verif = new validEmail
+
+  if (!!req.body.email) {
+    emailControlled = verif.control(req.body.email)
+
+    if (!!emailControlled && !!req.body.step) {
+
+            // generate a new token if email is correct
+            User.find(
+              {email : emailControlled}
+            , function (err, docs, user, token, newH) {
+                if (!!docs.length) {
+                  user = docs[0]
+                  if (!!user.active) {
+
+                    // renew hash
+                    newH = hash.generate()
+
+
+                    User.update({"_id" : user._id}, {"hash" : newH}, function(err, stats){
+                      if(!!err) throw(err)
+
+                      if(!!stats.ok) {
+
+                        token = jwt.sign({
+                            expiresIn : "1d"
+                          , email : user.email
+                          , hash : newH
+                        }, key)
+
+                        res.json({"token" : token})
+
+                        // http://localhost:8080/#renewPassword/valid/[TOKEN]
+
+                        // send email with an new token with hash in link
+
+                      }
+
+                    })
+
+                  } else
+                    res.json({"error" : "Your acccount is not actived, you can't change the password"})
+
+                } else
+                  res.send(401)
+
+              }
+            )
+
+
+    }
+    else
+      res.send(401)
+  } else
+    res.send(401)
+
+})
+
+
 router.post('/user', function(req, res) {
-  //console.log(req.body);
+
   var newHash = hash.generate()
   var verif = new validEmail
-
-  // var emailValid = validEmail(req.body.email)
-  // TODO ; control email and password formats
   var emailValid = verif.control(req.body.email)
 
   if(!emailValid)
     res.send(401)
 
-  console.log("emailValid : ", emailValid);
-  var passValid = req.body.pwd
-
+  var passValid = req.body.pwd // TODO ; control password formats
   var passEncrypt = bcrypt.hashSync(passValid)
 
   var data = {
@@ -114,8 +215,6 @@ router.post('/user', function(req, res) {
     , level : '1'
   }
 
-  console.log("data inserted : ", data, emailValid)
-
   var user = new User(data)
 
   user.save(function (err) {
@@ -126,26 +225,43 @@ router.post('/user', function(req, res) {
     var token = jwt.sign({
         expiresIn : "2d"
       , hash : newHash
-      , email : emailValid
-    }, "ilovecats")
+    }, key)
+
+    var dataEmail = {
+        email : emailValid
+      , token : token
+    }
 
     // TODO : Send token by email
+    constructEmailValidateAccount(dataEmail)
 
     res.json({token : token})
 
   })
-
 })
 
-router.get('/user/validate', expressJwt({secret:"ilovecats"}), function(req, res) {
 
-  if (!req.body.t || typeof req.body.t !== "string")
-    res.send(401)
+router.post('/user/validate', expressJwt({secret:key}), function(req, res) {
 
-  var token = req.body.t
+  if (!!req.user){
+    var hash = req.user.hash
+    var mail = req.user.email
 
-
-
+    // find user
+    User.find({email:mail}, function (err, docs, user) {
+      if (!!docs.length) {
+          user = docs[0]
+        if (user.hash == hash && !user.active) {
+          User.update({"hash":hash}, {"active" : true}, function(){
+            res.json({msg : "Your account is validated now. You can log in our website"})
+          })
+        } else
+          res.json({msg: "Your account have already actived"})
+      }
+      else
+        res.json({msg : "You don't have an account. Be sure to have one for validate it."})
+    })
+  }
 })
 
 
@@ -153,13 +269,16 @@ router.get('/user/:user_id', function(req, res) {
   res.json({action:" GET one user"})
 })
 
+
 router.delete('/user/:user_id', function(req, res) {
   res.json({action:"DELETE one user"})
 })
 
+
 router.put('/user/:user_id', function(req, res) {
   res.json({action:" PUT update for one user"})
 })
+
 
 // middleware for auth (passport)
 function isLoggedIn(req, res, next) {
@@ -167,6 +286,43 @@ function isLoggedIn(req, res, next) {
     return next()
 
   res.redirect('/') // if unauthenticated
+}
+
+// construct Email : Validate account
+function constructEmailValidateAccount(dataEmail) {
+
+  loadtemplate("footer", __dirname + '/hbs/commons/footer.hbs')
+  loadtemplate("header", __dirname + '/hbs/commons/header.hbs')
+  loadtemplate("body", __dirname + '/hbs/email.hbs')
+
+  fs.readFile(__dirname + '/hbs/body.hbs', 'utf8', function(err, data, model){
+    if (err) throw err
+
+    if (!!data){
+
+      model = {
+          header_text : "test Header text"
+        , footer_text : "test Footer text"
+        , title_tag : "Title of page"
+      }
+
+      var r = handlebars.compile(data)
+
+      setTimeout(function(){
+        var output = r(model)
+        console.log("R output : ",output);
+      },100)
+    }
+
+  })
+}
+
+function loadtemplate(name, path) {
+  fs.readFile(path, 'utf8', function(err, data){
+    if (err) throw err
+    console.log("data[",name,"] : ", data)
+    handlebars.registerPartial(name, data)
+  })
 }
 
 

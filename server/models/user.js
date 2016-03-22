@@ -8,6 +8,7 @@ UserShema = new Schema({
       email: String
     , username : String
     , pass : String
+    , oldPass : String
     , lastConnection : String
     , startDate : String
     , active : Boolean
