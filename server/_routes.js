@@ -27,7 +27,7 @@ router.use(function timeLog(req, res, next) {
 router.get('/', function(req, res) {
   res.json({api : 'API work !'})
 })
-
+/*
 router.post('/auth', function(req, res) {
 
   var em = req.body.email
@@ -67,12 +67,12 @@ router.post('/auth', function(req, res) {
   })
 
 })
-
+*/
 router.get('/test/email', function(req, res) {
 
   res.json({code:200})
 })
-
+/*
 router.get('/users', function(req, res) {
   User.find({}, function (err, docs) {
       res.json(docs)
@@ -84,7 +84,7 @@ router.get('/users', function(req, res) {
   //var time =
   //console.log("time : ",time);
 })
-
+*/
 router.post('/verify/email', function(req, res, email){
   if (!!req.body && !!req.body.email) {
     //console.log("email searched :: ",req.body.email);
@@ -96,7 +96,7 @@ router.post('/verify/email', function(req, res, email){
     })
   }
 })
-
+/*
 router.get('/user/authnewpass', expressJwt({secret:key}), function(req, res, hash) {
 
   console.log("data in token", req.user)
@@ -131,8 +131,8 @@ router.get('/user/authnewpass', expressJwt({secret:key}), function(req, res, has
 
 
 })
-
-
+*/
+/*
 router.post('/user/renewpass', function(req, res, emailControlled, verif){
 
   verif = new validEmail
@@ -192,8 +192,8 @@ router.post('/user/renewpass', function(req, res, emailControlled, verif){
     res.send(401)
 
 })
-
-
+*/
+/*
 router.post('/user', function(req, res) {
 
   var newHash = hash.generate()
@@ -263,7 +263,7 @@ router.post('/user/validate', expressJwt({secret:key}), function(req, res) {
     })
   }
 })
-
+*/
 
 router.get('/user/:user_id', function(req, res) {
   res.json({action:" GET one user"})

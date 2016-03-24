@@ -2,8 +2,9 @@
 
 var express     = require('express')
   , router      = express.Router()
-  , User        = require("./models/user")
-  , hash        = require('./utils').hash
+  , User        = require("../models/user")
+  , hash        = require('../utils').hash
+  , key         = require("../config/auth").key
 
 
 

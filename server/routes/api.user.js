@@ -1,11 +1,22 @@
 "use strict"
 
 var express     = require('express')
-  , User        = require("./models/user")
-  , Hash        = require('./utils').hash
+  , User        = require("../models/user")
+  , Hash        = require('../utils').hash
   , router      = express.Router()
-  , User        = require("./models/user")
-  , key         = "ihaveanheartasallpeoplearoundme.yeah"
+  , key         = require("../config/auth").key
+
+
+
+module.exports.getuser = function (req, res) {
+  res.json({action:" GET one user"})
+}
+
+module.exports.allusers = function (req, res) {
+  User.find({}, function (err, docs) {
+      res.json(docs)
+  })
+}
 
 module.exports.authnewpass = function(req, res, hash) {
   hash = (!!req.user.hash ? req.user.hash : false)
@@ -135,7 +146,7 @@ module.exports.user = function(req, res, newHash, verif, emailValid, passValid, 
     if (err)
       res.json({error : err})
 
-      // create a new token for validate account
+    // create a new token for validate account
     tokenJWT = jwt.sign({
         expiresIn : "2d"
       , hash : newHash
@@ -153,14 +164,3 @@ module.exports.user = function(req, res, newHash, verif, emailValid, passValid, 
 
   })
 }
-
-//router.get('/authnewpass', expressJwt({secret:key}), )
-
-
-//router.post('/renewpass', )
-
-
-//router.post('/validate', expressJwt({secret:key}), )
-
-
-//router.post('/', )
