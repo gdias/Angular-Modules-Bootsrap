@@ -1,12 +1,23 @@
 "use strict"
 
-var express     = require('express')
-  , User        = require("../models/user")
-  , Hash        = require('../utils').hash
-  , router      = express.Router()
-  , key         = require("../config/auth").key
-
-
+var express           = require('express')
+  , User              = require("../models/user")
+  , db                = require("../database").db
+  , jwt               = require("jsonwebtoken")
+  , Hash              = require('../utils').hash
+  , router            = express.Router()
+  , key               = require("../config/auth").key
+  , nodemailer        = require('nodemailer')
+  , smtpTransport     = require('nodemailer-smtp-transport')
+  , validEmail        = require('../utils').validEmail
+  , moment            = require('moment')
+  , handlebars        = require('handlebars')
+  , bcrypt            = require('bcrypt-nodejs')
+  , fs                = require('fs-promise')
+  , configEmail       = require("../config/email")
+  , Path              = require("path")
+  , Q                 = require("q")
+  , BASE              = "localhost:8080/#/"
 
 module.exports.getuser = function (req, res) {
   res.json({action:" GET one user"})
@@ -96,6 +107,16 @@ module.exports.renewpass = function(req, res, emailControlled, verif){
 
 }
 
+module.exports.verifyEmail = function(req, res, email){
+  if (!!req.body && !!req.body.email) {
+    email = req.body.email
+
+    User.find({"email" : email}, function (err, docs) {
+        res.json(docs)
+    })
+  }
+}
+
 
 module.exports.validate = function(req, res, hash, mail) {
 
@@ -120,47 +141,158 @@ module.exports.validate = function(req, res, hash, mail) {
   }
 }
 
-module.exports.user = function(req, res, newHash, verif, emailValid, passValid, passEncrypt, data, user) {
+module.exports.user = function(req, res) {
 
-  newHash = Hash.generate()
-  verif = new validEmail
-  emailValid = verif.control(req.body.email)
+  var newHash = Hash.generate()
+  var verif = new validEmail
+  var emailValid = verif.control(req.body.email)
 
   if(!emailValid)
     res.send(401)
 
-  passValid = req.body.pwd // TODO ; control password formats
-  passEncrypt = bcrypt.hashSync(passValid)
-  user = new User(data)
-  data = {
-      email : emailValid
-    , pass: passEncrypt
-    , hash : newHash
-    , startDate : moment().format()
-    , active : 'false'
-    , level : '1'
-  }
+  var passValid = req.body.pwd // TODO ; control password formats
+  var passEncrypt = bcrypt.hashSync(passValid)
+  var data = {
+        email : emailValid
+      , pass: passEncrypt
+      , hash : newHash
+      , startDate : moment().format()
+      , active : 'false'
+      , level : '1'
+    }
+  var user = new User(data)
 
-  user.save(function (err, tokenJWT, dataEmail) {
+  user.save(function (err) {
 
     if (err)
       res.json({error : err})
 
     // create a new token for validate account
-    tokenJWT = jwt.sign({
+    var tokenJWT = jwt.sign({
         expiresIn : "2d"
       , hash : newHash
-    }, key)
+    }
+    , key)
 
-    dataEmail = {
-        email : emailValid
+    var objEmail = {
+        mail : emailValid
       , token : tokenJWT
     }
 
-    // TODO : Send token by email
-    constructEmailValidateAccount(dataEmail)
+    // contruct email for activate account
+    constructEmailValidateAccount(objEmail).then(onsuccess, onerror)
+
+    function onerror(err){
+      console.log("err : ",err);
+    }
+
+    function onsuccess(htmlEmail, nodemailerData){
+
+      nodemailerData = {
+        from: configEmail.sender,
+        to: emailValid,
+        subject: '[IMPORTANT] - Activate your registration and continue on our website, welcome !',
+        html: htmlEmail
+      }
+
+      var options = {
+          host: 'localhost',
+          port: 25
+      }
+
+      var transporter = nodemailer.createTransport(smtpTransport(options))
+
+      transporter.verify(function(error, success) {
+         if (error) {
+              console.log(error);
+         } else {
+              console.log('Server is ready to take our messages');
+         }
+      });
+
+      transporter.sendMail(nodemailerData, function(error, info){
+        if(error)
+            return console.log(error);
+
+        console.log('Message sent: ' + info.response);
+      })
+
+    }
 
     res.json({token : tokenJWT})
 
   })
+}
+
+
+
+// construct Email : Validate account
+var constructEmailValidateAccount = function (dataEmail, deferred) {
+
+  deferred = Q.defer()
+
+  if (!dataEmail)
+    deferred.reject("no data")
+
+  loadtemplate("footer", '/../hbs/commons/footer.hbs')
+  .then(loadtemplate("header", '/../hbs/commons/header.hbs'))
+  .then(loadtemplate("body", '/../hbs/email_activate.hbs'))
+  .then(function(){
+
+    fs.readFile(__dirname + '/../hbs/index.hbs', 'utf8', function(err, data, model, tmpl){
+      if (err)
+        deferred.reject(err)
+
+      if (!!data){
+
+        // create a new Model for generate the activate email
+        model = {
+          header_text : "test Header text"
+          , footer_text : "test Footer text"
+          , title_tag : "Title of page"
+          , email : {
+              title : "You must active your account !"
+            , text : "For activate your account, just click on the next button."
+            , button : {
+                link : [BASE, "validateAccount/" ,dataEmail.token].join("")
+              , text : "Activer votre compte"
+            }
+          }
+        }
+
+        for(var i in dataEmail)
+          model[i] = dataEmail[i]
+
+        tmpl = handlebars.compile(data)
+
+        deferred.resolve(tmpl(model))
+      }
+      else
+        deferred.reject("no data")
+
+    })
+  })
+
+  return deferred.promise
+}
+
+function loadtemplate(name, path, deferred) {
+  deferred = Q.defer()
+
+  if(!!path && !!name){
+    var p = Path.normalize( __dirname + path)
+
+    fs.readFile(p, 'utf8', function(err, data) {
+      if (err)
+      deferred.reject(err)
+
+      handlebars.registerPartial(name, data)
+      deferred.resolve(data)
+    })
+
+  }
+  else
+    console.error("HORROR")
+
+  return deferred.promise
 }

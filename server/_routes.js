@@ -85,6 +85,7 @@ router.get('/users', function(req, res) {
   //console.log("time : ",time);
 })
 */
+/*
 router.post('/verify/email', function(req, res, email){
   if (!!req.body && !!req.body.email) {
     //console.log("email searched :: ",req.body.email);
@@ -96,6 +97,7 @@ router.post('/verify/email', function(req, res, email){
     })
   }
 })
+*/
 /*
 router.get('/user/authnewpass', expressJwt({secret:key}), function(req, res, hash) {
 
@@ -287,7 +289,7 @@ function isLoggedIn(req, res, next) {
 
   res.redirect('/') // if unauthenticated
 }
-
+/*
 // construct Email : Validate account
 function constructEmailValidateAccount(dataEmail) {
 
@@ -324,6 +326,6 @@ function loadtemplate(name, path) {
     handlebars.registerPartial(name, data)
   })
 }
-
+*/
 
 module.exports = router

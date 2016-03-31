@@ -3,6 +3,7 @@
 var express     = require('express')
   , router      = express.Router()
   , User        = require("../models/user")
+  , db          = require("../database").db
   , hash        = require('../utils').hash
   , key         = require("../config/auth").key
 
