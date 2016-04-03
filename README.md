@@ -1,14 +1,24 @@
 
 ##Angular modules bootstrap
 
-I have recently updated my way of work in web development, and i has do a bootstrap for start an angular project instantly. One idea, checkout from github, code this idea !
+I have recently updated my way of work in web development, and i recently make an bootstrap for start instantly an FullJS project. Ideas, clone project on github, just code it !
 
-This bootstrap is based on modules of browserify, not the Angular's modules.
+This AngularJS bootstrap is oriented on modules of browserify, not the Angular's modules. This approach is a nice way for create an new clientside project with CommonJS modules. Also it's a good starting point for isomorphic coding.
 
-It use Gulp for all front-end task (dev and production mode)
 
-### Features
-- Client Angular 1.5.O
+Into this bootstrap you will find :
+
+  ##### ServerSide
+  * Api server with JWT Auth routes [Express]
+  * Email templates helpers [Handlebars]
+  * Database with Mongoose [MongoDB]
+
+  ##### ClientSide
+  * Development Server [Gulp]
+  * Sass styles Builder [SCSS]
+
+## Features
+- Angular 1.5.O
 - Server API ExpressJS
 - Database MongoDB
 - Json Web Token Authentication

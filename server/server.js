@@ -1,21 +1,21 @@
 "use strict"
 
+process.env.NODE_ENV = "development" // "production"
+
 // ========== Require dependencies
 
 var express      = require('express')
   , exphbs       = require('express-handlebars')
   , app          = express()
-  , passport     = require('passport')
-  , flash        = require('connect-flash')
-  , morgan       = require('morgan')
   , cookieParser = require('cookie-parser')
   , bodyParser   = require('body-parser')
   , session      = require('express-session')
   , expressJWT   = require("express-jwt")
   , jwt          = require("jsonwebtoken")
+  , devMode      = (app.get('env') === "development" ? true : false)
 
 
-module.exports = function(path, port, welcome, db, parent, APIpathRoute) {
+module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
 
 // ========== Configuration Server & connect to MongoDB
   welcome = ["The Express Server is started on ",port," port"].join("")
@@ -32,28 +32,20 @@ module.exports = function(path, port, welcome, db, parent, APIpathRoute) {
   app.use(express.static(path))
 
   // Auth routes api
-  APIpathRoute = [
-      "/api/auth"
-    , "/api/user/authnewpass"
-    , "/api/user/renewpass"
-    , "/api/verify/email"
-    , "/api/user/validate"
-    , "/api/user"
-    , "/api/users"
+  APIPathRoute = [
+      /^\/api\/auth/
+    , /^\/api\/user\/setadmin\/.*/
+    , /^\/api\/user\/.*/
+    , /^\/api\/users/
+    , /^\/api\/verify\/email/
   ]
 
+  if (devMode)
+    APIPathRoute = [/^\/api\/.*/]
+
   // API secured
-  app.use(expressJWT({secret:"ilovecats"}).unless({path:APIpathRoute}))
+  app.use(expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
   app.use('/api',require('./routes'))
-
-  // required for passport
-  // app.use(session({ secret: 'ihaveanheartasallpeoplearoundme' }))
-  // app.use(passport.initialize())
-  // app.use(passport.session())
-  // app.use(flash())
-  //
-  // app.use(bodyParser.urlencoded({ extended: true }))
-
 
   // ========== Start Server
   app.listen(port)

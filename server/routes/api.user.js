@@ -118,16 +118,18 @@ module.exports.verifyEmail = function(req, res, email){
 }
 
 
-module.exports.validate = function(req, res, hash, mail) {
-
+module.exports.validate = function(req, res) {
+  console.log("validate : ", req.user);
   if (!!req.user) {
-    hash = req.user.hash
-    mail = req.user.email
+    var hash = req.user.hash
+    var mail = req.user.email
 
     // find user
     User.find({email:mail}, function (err, docs, user) {
       if (!!docs.length) {
           user = docs[0]
+          console.log("user finded ",user)
+
         if (user.hash == hash && !user.active) {
           User.update({"hash":hash}, {"active" : true}, function(){
             res.json({msg : "Your account is validated now. You can log in our website"})
@@ -138,11 +140,39 @@ module.exports.validate = function(req, res, hash, mail) {
       else
         res.json({msg : "You don't have an account. Be sure to have one for validate it."})
     })
+  } else {
+    console.log("Error : Not body on this request")
+    res.send(401)
   }
 }
 
-module.exports.user = function(req, res) {
+///////////////////////////////////////////////
+///////////  SET ADMIN [GET _id]  ////////////
+///////////////////////////////////////////////
+module.exports.setAdmin = function(req, res) {
 
+  if(!req.params.id)
+    res.send(401)
+
+
+
+  console.log("set this _id : ", req.params.id);
+
+  User.update({"_id" : req.params.id}, {"level" : 666}, function(err, stats){
+    if(!!err) console.log("HORROR : ",err)
+
+    if(!!stats.ok)
+      res.json({msg:"This user has been updated on Admin level"})
+     else
+      res.send(401)
+  })
+
+
+
+}
+///////////////////////////////////////////////
+
+module.exports.user = function(req, res) {
   var newHash = Hash.generate()
   var verif = new validEmail
   var emailValid = verif.control(req.body.email)
@@ -152,14 +182,21 @@ module.exports.user = function(req, res) {
 
   var passValid = req.body.pwd // TODO ; control password formats
   var passEncrypt = bcrypt.hashSync(passValid)
+
   var data = {
-        email : emailValid
-      , pass: passEncrypt
-      , hash : newHash
-      , startDate : moment().format()
-      , active : 'false'
-      , level : '1'
-    }
+      email : emailValid
+    , pass: passEncrypt
+    , hash : newHash
+    , startDate : moment().format()
+    , active : 'false'
+    , level : '1'
+  }
+
+
+
+  // if (sessionStorage.getItem('isAdmin'))
+  //   data.passAdmin = Hash.generate()
+
   var user = new User(data)
 
   user.save(function (err) {
@@ -171,6 +208,7 @@ module.exports.user = function(req, res) {
     var tokenJWT = jwt.sign({
         expiresIn : "2d"
       , hash : newHash
+      , email : emailValid
     }
     , key)
 

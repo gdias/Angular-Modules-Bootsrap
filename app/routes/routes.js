@@ -57,7 +57,6 @@ module.exports.routes = [
     })
     .when('/validateAccount/:token', {
           templateUrl: 'partials/auth/validateAccount.html'
-        //, controller: 'validateAccountController'
     })
     .when('/renewPassword/start', {
           templateUrl: 'partials/auth/renew_start.html'
@@ -78,7 +77,6 @@ module.exports.routes = [
             loggedin: checkLoggedin
           }
     })
-
     .otherwise({
         redirectTo: '/home'
     })

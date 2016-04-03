@@ -54,7 +54,8 @@ gulp.task('connect', function() {
 
 gulp.task('start', function() {
   nodemon({
-    script: './server/server.js'
+    script: 'server/server.js'
+  , watch : "server/**/*"
   , ext: 'js html'
   , env: { 'NODE_ENV': 'development' }
   })

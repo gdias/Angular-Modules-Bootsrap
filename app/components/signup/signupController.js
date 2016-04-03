@@ -42,20 +42,22 @@ module.exports.validateAccountController = ['$scope', '$http', '$routeParams', '
 
     if (!!$routeParams.token){
       var token = $routeParams.token
+
       $scope.form = {}
       $scope.form.show = false
       $scope.form.hide = true
-      $scope.showPass = function() {
 
+      $scope.showPass = function() {
+        console.log("switch type of input text/password")
       }
 
       $scope.sendNewPass = function() {
 
       }
 
-      if (token)
+      if (!!token)
         $http({
-            method: 'GET'
+            method: 'POST'
           , url: '/api/user/validate'
           , headers: {
             'Authorization': ['Bearer ',token].join("")
@@ -63,10 +65,14 @@ module.exports.validateAccountController = ['$scope', '$http', '$routeParams', '
         }).success(authOk).error(authNok)
 
         function authOk (data, status, headers, config){
-          if (status === 200){
-            console.log(data.msg)
+          if (status === 200) {
+            $scope.result = data.msg
+
+            setTimeout(function(){
+              location.href = "/"
+            }, 4000)
+
           }
-          $scope.result = data.msg
         }
 
         function authNok(err) {

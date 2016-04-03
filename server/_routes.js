@@ -15,8 +15,6 @@ var express     = require('express')
   , handlebars  = require('handlebars')
   , key         = "ihaveanheartasallpeoplearoundme.yeah"
 
-
-
 // middleware
 router.use(function timeLog(req, res, next) {
   console.log('Time: ', Date.now())
