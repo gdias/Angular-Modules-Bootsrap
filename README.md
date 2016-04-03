@@ -7,15 +7,14 @@ This AngularJS bootstrap is oriented on modules of browserify, not the Angular's
 
 
 Into this bootstrap you will find :
+##### ServerSide
+* Api server with JWT Auth routes [Express]
+* Email templates helpers [Handlebars]
+* Database with Mongoose [MongoDB]
 
-  ##### ServerSide
-  * Api server with JWT Auth routes [Express]
-  * Email templates helpers [Handlebars]
-  * Database with Mongoose [MongoDB]
-
-  ##### ClientSide
-  * Development Server [Gulp]
-  * Sass styles Builder [SCSS]
+##### ClientSide
+* Development Server [Gulp]
+* Sass styles Builder [SCSS]
 
 ## Features
 - Angular 1.5.O
