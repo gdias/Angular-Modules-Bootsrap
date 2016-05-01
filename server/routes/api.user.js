@@ -110,9 +110,9 @@ module.exports.renewpass = function(req, res, emailControlled, verif){
 module.exports.verifyEmail = function(req, res, email){
   if (!!req.body && !!req.body.email) {
     email = req.body.email
-
-    User.find({"email" : email}, function (err, docs) {
-        res.json(docs)
+    User.find({"email" : email}, function (err, docs, resultTest) {
+        resultTest = !!docs.length
+        res.json(resultTest)
     })
   }
 }

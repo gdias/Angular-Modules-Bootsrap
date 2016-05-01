@@ -9,6 +9,9 @@ var express      = require('express')
   , app          = express()
   , cookieParser = require('cookie-parser')
   , bodyParser   = require('body-parser')
+  , morgan       = require("morgan")
+  , i18n         = require('i18n')
+  , configI18n   = require('./config/lang')
   , session      = require('express-session')
   , expressJWT   = require("express-jwt")
   , jwt          = require("jsonwebtoken")
@@ -26,6 +29,7 @@ module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
   // configure Express
   app.use(morgan('dev'))
   app.use(cookieParser())
+  //app.use(i18n.init)
   app.use(bodyParser.json())
 
   // statics file (SPA)

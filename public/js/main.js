@@ -193,29 +193,45 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
 "use strict"
 
 var jwt = require("jsonwebtoken")
-//var signupService = require("./signupService").signupService
+//var i18n = require("i18n")
 
 module.exports.signupController = ['$scope', '$http', 'signupService',
 function signupController ($scope, $http, signupService){
   $scope.message = "Inscription"
-
   $scope.form = {}
+  $scope.debug = true
+
+  $scope.checkEmailFormat = function(){
+      console.log($scope.form.email," - args",arguments, $scope.form.emailvalid)
+  }
+
+  $scope.checkPwdForce = function() {
+    //console.log("controlPwdForce : ",controlPwdForce);
+    $scope.form.validPwd = signupService.verifForcePwd($scope.form.pwd)
+  }
+
+  $scope.checkSame = function() {
+    //console.log("isSAME ? ",$scope.form.pwd," <==<=>==> ",$scope.form.pwdconfirm, "--> ",($scope.form.pwd == $scope.form.pwdconfirm ? true : false));
+    $scope.form.validPwdConfirm = ($scope.form.pwd == $scope.form.pwdconfirm ? true : false)
+  }
 
   $scope.checkEmailExist = function(){
+    //console.log("d : ",$scope.form.email)
 
-    //console.log("send this email : ", $scope.form.email);
-    //  console.log("signupService : ",signupService);
     if (!!$scope.form.email)
-      signupService.checkIfEmailExist($scope.form.email)
-    //console.log("exist",exist);
-    //console.log("email exist",exist);
+      signupService.checkIfEmailExist($scope.form.email).then(function(data){
+        console.log("data chce =  ",data);
+        $scope.form.emailvalid = (!data ? true : false)
+      })
+
+  //  console.log("emailvalid : ", $scope.form.emailvalid);
   }
 
 
   $scope.signUpUser = function(){
 
     $http.post("/api/user", $scope.form).then(function(response, validateUrl){
-      console.log("token ",response.data.token);
+      //console.log("token ",response.data.token);
 
       if (!!response.data.token)
         validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
@@ -284,31 +300,57 @@ module.exports.validateAccountController = ['$scope', '$http', '$routeParams', '
 },{"jsonwebtoken":238}],8:[function(require,module,exports){
 "use strict"
 
-// TODO : Method for control if email exist
-
 module.exports.signupService = ["$http", "$q",
     function($http, $q){
-        //var apiurl = "//localhost:8181"
-        this.checkIfEmailExist = function(email) {
-            return $http.post('/api/verify/email', {"email" : email}).then(handleSuccess, handleError)
-        }
 
-        function handleSuccess(response){
-          var data = response.data
+    function emailExist (email) {
+      var deferred = $q.defer()
 
-          console.log("handleSuccess : ", data)
-          //console.log("complete response : ", response.data)
-          // angular.forEach(data, function (key, values) {
-          //
-          // })
-          return data
-        }
-        function handleError(resp){
+      $http.post('/api/verify/email', {"email" : email})
+      .then(handleSuccess, handleError)
 
-            console.log("Error : ",resp);
-        }
+      function handleSuccess (response, data) {
+        // console.log(response.data);
+        data = (!!response && !!response.data ? response.data : false)
 
+        console.log("handleSuccess (checkIfEmailExist) : ", data)
+        deferred.resolve(data)
+      }
+
+      function handleError (err) {
+        console.error("Error : ",err)
+        deferred.reject(err)
+      }
+
+      return deferred.promise
     }
+
+
+
+    function verifForce (pwd, sizeMin, find) {
+      if (!!pwd || typeof pwd !== "undefined"){
+      // 1. check size
+      // 2. check number
+      sizeMin = 6
+
+        if ( pwd.length >= sizeMin ) {
+          find = pwd.match(/\d+/g)
+          if(find != null)
+              return true
+            else
+              return false
+        } else
+          return false
+      } else
+        return false
+    }
+
+    return {
+        checkIfEmailExist : emailExist
+      , verifForcePwd : verifForce
+    }
+
+  }
 ]
 
 },{}],9:[function(require,module,exports){
@@ -402,11 +444,16 @@ module.exports.routes = [
 
 module.exports.menuController = ['$scope', '$http', '$rootScope', function menuController ($scope, $http, $rootScope){
 
-  $scope.message = "Menu items"
+  console.log("menuController - ", $scope.template);
 
+  $scope.message = "Menu items"
+  $scope.template = {
+      name : "account"
+    , url : "'partials/commons/menu.html'"
+  }
   $rootScope.$on('updateMenuEvent', function (event, data) {
     console.log("emit event for menu ", $rootScope.auth);
-    
+
     if ($rootScope.auth)
       $scope.template = {
           name : "account"

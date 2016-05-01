@@ -1,21 +1,32 @@
 <div ng-controller="signupController">
-  <h3>Sign Up</h3>
-  <p>
-    Commencez par créer un compte
-  </p>
+  <h3>{{message}}</h3>
   <p>
     Start by to create an account
   </p>
   <form ng-submit="signUpUser()" name="signUPform">
     <span class="error" ng-show="myForm.input.$error.required">Required!</span>
     <div>
-      <input type="email" placeholder="email" ng-model="form.email" name="email" ng-blur="checkEmailExist()" required>
+      <input type="email" placeholder="email" ng-model="form.email" name="email" ng-change="checkEmailFormat()" ng-blur="checkEmailExist()" ng-blur="checkEmailExist()" required>
+      <span ng-show="form.emailvalid">email not already used</span>
     </div>
     <div>
-      <input type="password" placeholder="Password" ng-model="form.pwd" name="pwd" required>
+      <input type="password" placeholder="Password" ng-model="form.pwd" name="pwd" ng-change="checkPwdForce()" required>
+      <div class="required" ng-hide="form.validPwd">
+        <ul>
+          <li>most 6 characters</li>
+          <li>most have one numeric characters</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <input type="password" placeholder="Password Confirm" ng-model="form.pwdconfirm" name="pwdconfirm" ng-change="checkSame()" required>
+      <span ng-show="form.validPwdConfirm">same pwd ok</span>
     </div>
     <div>
       <input type="submit" value="Sign up now">
+    </div>
+    <div ng-show="debug">
+      form model : {{form | json}}
     </div>
   </form>
 </div>

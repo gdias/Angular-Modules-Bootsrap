@@ -1,29 +1,45 @@
 "use strict"
 
 var jwt = require("jsonwebtoken")
-//var signupService = require("./signupService").signupService
+//var i18n = require("i18n")
 
 module.exports.signupController = ['$scope', '$http', 'signupService',
 function signupController ($scope, $http, signupService){
   $scope.message = "Inscription"
-
   $scope.form = {}
+  $scope.debug = true
+
+  $scope.checkEmailFormat = function(){
+      console.log($scope.form.email," - args",arguments, $scope.form.emailvalid)
+  }
+
+  $scope.checkPwdForce = function() {
+    //console.log("controlPwdForce : ",controlPwdForce);
+    $scope.form.validPwd = signupService.verifForcePwd($scope.form.pwd)
+  }
+
+  $scope.checkSame = function() {
+    //console.log("isSAME ? ",$scope.form.pwd," <==<=>==> ",$scope.form.pwdconfirm, "--> ",($scope.form.pwd == $scope.form.pwdconfirm ? true : false));
+    $scope.form.validPwdConfirm = ($scope.form.pwd == $scope.form.pwdconfirm ? true : false)
+  }
 
   $scope.checkEmailExist = function(){
+    //console.log("d : ",$scope.form.email)
 
-    //console.log("send this email : ", $scope.form.email);
-    //  console.log("signupService : ",signupService);
     if (!!$scope.form.email)
-      signupService.checkIfEmailExist($scope.form.email)
-    //console.log("exist",exist);
-    //console.log("email exist",exist);
+      signupService.checkIfEmailExist($scope.form.email).then(function(data){
+        console.log("data chce =  ",data);
+        $scope.form.emailvalid = (!data ? true : false)
+      })
+
+  //  console.log("emailvalid : ", $scope.form.emailvalid);
   }
 
 
   $scope.signUpUser = function(){
 
     $http.post("/api/user", $scope.form).then(function(response, validateUrl){
-      console.log("token ",response.data.token);
+      //console.log("token ",response.data.token);
 
       if (!!response.data.token)
         validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
