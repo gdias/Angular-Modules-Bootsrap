@@ -1,10 +1,12 @@
 
 ##Angular modules bootstrap
 
-I have recently updated my way of work in web development, and i recently make an bootstrap for start instantly an FullJS project. Ideas, clone project on github, just code it !
+I changed my way of working in front-end development, and i recently make an bootstrap for start instantly an FullJS project. You have an website idea ? Clone project from github and just code it !
 
-This AngularJS bootstrap is oriented on modules of browserify, not the Angular's modules. This approach is a nice way for create an new clientside project with CommonJS modules. Also it's a good starting point for isomorphic coding.
+This AngularJS bootstrap is oriented on modules of browserify, not the Angular's modules. This approach is a nice way for create an new clientside project with CommonJS modules. Also it's a starting point for isomorphic coding.
 
+##### Version
+> 0.1.0
 
 Into this bootstrap you will find :
 ##### ServerSide
@@ -13,7 +15,7 @@ Into this bootstrap you will find :
 * Database with Mongoose [MongoDB]
 
 ##### ClientSide
-* Development Server [Gulp]
+* Development Server with Watcher, Compiler and notifications [Gulp]
 * Sass styles Builder [SCSS]
 
 ## Features
@@ -21,15 +23,16 @@ Into this bootstrap you will find :
 - Server API ExpressJS
 - Database MongoDB
 - Json Web Token Authentication
-- Module pattern with Browserify
+- Module pattern Browserify
+- Account part ready (Create, Sign In, Retrieve password)
 - Use uglify for validate and compress JS code
 - Sass builder (node-sass) and minifying
-- Angular minifier mod
+
+
 
 ### Before start
 Be sure to have an MongoDB server ready for use this bootstrap.
 You can use this command for start mongoDB server
-
 > mongod
 
 
@@ -40,3 +43,10 @@ You can use this command for start mongoDB server
 
 #### Start production compression
 > gulp prod
+
+
+#### Roadmap
+- Add i18n for ML
+- Add Unit Test with other Gulp process
+- Add account editor for users
+- Add account manager for admin
