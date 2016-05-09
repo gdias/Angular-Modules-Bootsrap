@@ -19,21 +19,23 @@ Into this bootstrap you will find :
 * Sass styles Builder [SCSS]
 
 ## Features
-- Angular 1.5.O
-- Server API ExpressJS
+- Node 6
+- Angular 1.5
+- Server API ExpressJS 4
 - Database MongoDB
 - Json Web Token Authentication
 - Module pattern Browserify
-- Account part ready (Create, Sign In, Retrieve password)
+- Account part ready (Sign up, Sign In, Password lost)
 - Use uglify for validate and compress JS code
 - Sass builder (node-sass) and minifying
 
-
-
 ### Before start
-Be sure to have an MongoDB server ready for use this bootstrap.
+Make sure to have an MongoDB server ready for use this bootstrap.
 You can use this command for start mongoDB server
 > mongod
+
+For the tests E2E with Protractor, make sure you have Java installed and last versions of packages. The last version of NodeJs rewrite package arch, it's preferable to delete all nodes_modules in this case, and only after make
+> npm install
 
 
 ##Usage
@@ -44,9 +46,10 @@ You can use this command for start mongoDB server
 #### Start production compression
 > gulp prod
 
+#### Start Angular E2e tests
+> gulp tests
 
 ## Roadmap
 - Add i18n for ML
-- Add Unit Test with other Gulp process
 - Add account editor for users
 - Add account manager for admin

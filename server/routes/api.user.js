@@ -15,9 +15,11 @@ var express           = require('express')
   , bcrypt            = require('bcrypt-nodejs')
   , fs                = require('fs-promise')
   , configEmail       = require("../config/email")
+  , helpers       = require("./helpers")
   , Path              = require("path")
   , Q                 = require("q")
-  , BASE              = "localhost:8080/#/"
+  , ROOTCLIENT        = require("../config/main").urlRootClient // Url Client Root
+  , DOMAIN            = require("../config/main").domain
 
 module.exports.getuser = function (req, res) {
   res.json({action:" GET one user"})
@@ -50,14 +52,38 @@ module.exports.authnewpass = function(req, res, hash) {
   }
 }
 
-module.exports.renewpass = function(req, res, emailControlled, verif){
 
-  verif = new validEmail
+module.exports.renewpassstart = function(req, res) {
+
+  console.log(">>> req.fresh ", req.fresh);
+  console.log(">>> req.xhr ", req.xhr);
+
+  //console.log(" --> ", req.hostname," === ",DOMAIN)
+
+  var tokenJWT = jwt.sign({
+      expiresIn : "1d"
+  }, key)
+
+  console.log("token secure for renew pass : ", tokenJWT)
+  // just control origin of request and send an new token
+
+  if (req.hostname === DOMAIN)
+    res.json({"token" : tokenJWT})
+  else
+    res.sendStatus(401)
+
+}
+
+module.exports.renewpass = function(req, res){
+  var emailControlled,
+      verif = new validEmail
+    //  console.log("content type > ", req.get('Content-Type'));
+    //  console.log("body > ",req.body)
 
   if (!!req.body.email) {
     emailControlled = verif.control(req.body.email)
 
-    if (!!emailControlled && !!req.body.step) {
+    if (!!emailControlled && !!req.body.step && req.body.step === 1) {
 
             // generate a new token if email is correct
             User.find(
@@ -95,15 +121,14 @@ module.exports.renewpass = function(req, res, emailControlled, verif){
                     res.json({"error" : "Your acccount is not actived, you can't change the password"})
 
                 } else
-                  res.send(401)
-
+                  res.sendStatus(401)
               }
             )
     }
     else
-      res.send(401)
+      res.sendStatus(401)
   } else
-    res.send(401)
+    res.sendStatus(401)
 
 }
 
@@ -142,7 +167,7 @@ module.exports.validate = function(req, res) {
     })
   } else {
     console.log("Error : Not body on this request")
-    res.send(401)
+    res.sendStatus(401)
   }
 }
 
@@ -152,7 +177,7 @@ module.exports.validate = function(req, res) {
 module.exports.setAdmin = function(req, res) {
 
   if(!req.params.id)
-    res.send(401)
+    res.sendStatus(401)
 
 
 
@@ -164,7 +189,7 @@ module.exports.setAdmin = function(req, res) {
     if(!!stats.ok)
       res.json({msg:"This user has been updated on Admin level"})
      else
-      res.send(401)
+      res.sendStatus(401)
   })
 
 
@@ -178,7 +203,7 @@ module.exports.user = function(req, res) {
   var emailValid = verif.control(req.body.email)
 
   if(!emailValid)
-    res.send(401)
+    res.sendStatus(401)
 
   var passValid = req.body.pwd // TODO ; control password formats
   var passEncrypt = bcrypt.hashSync(passValid)
@@ -192,145 +217,56 @@ module.exports.user = function(req, res) {
     , level : '1'
   }
 
-
-
   // if (sessionStorage.getItem('isAdmin'))
   //   data.passAdmin = Hash.generate()
 
   var user = new User(data)
 
-  user.save(function (err) {
+  user.save(function (err, tokenJWT, emailModel) {
 
     if (err)
       res.json({error : err})
 
     // create a new token for validate account
-    var tokenJWT = jwt.sign({
+    tokenJWT = jwt.sign({
         expiresIn : "2d"
       , hash : newHash
       , email : emailValid
     }
     , key)
 
-    var objEmail = {
-        mail : emailValid
-      , token : tokenJWT
-    }
-
-    // contruct email for activate account
-    constructEmailValidateAccount(objEmail).then(onsuccess, onerror)
-
-    function onerror(err){
-      console.log("err : ",err);
-    }
-
-    function onsuccess(htmlEmail, nodemailerData){
-
-      nodemailerData = {
-        from: configEmail.sender,
-        to: emailValid,
-        subject: '[IMPORTANT] - Activate your registration and continue on our website, welcome !',
-        html: htmlEmail
-      }
-
-      var options = {
-          host: 'localhost',
-          port: 25
-      }
-
-      var transporter = nodemailer.createTransport(smtpTransport(options))
-
-      transporter.verify(function(error, success) {
-         if (error) {
-              console.log(error);
-         } else {
-              console.log('Server is ready to take our messages');
-         }
-      });
-
-      transporter.sendMail(nodemailerData, function(error, info){
-        if(error)
-            return console.log(error);
-
-        console.log('Message sent: ' + info.response);
-      })
-
-    }
-
-    res.json({token : tokenJWT})
-
-  })
-}
-
-
-
-// construct Email : Validate account
-var constructEmailValidateAccount = function (dataEmail, deferred) {
-
-  deferred = Q.defer()
-
-  if (!dataEmail)
-    deferred.reject("no data")
-
-  loadtemplate("footer", '/../hbs/commons/footer.hbs')
-  .then(loadtemplate("header", '/../hbs/commons/header.hbs'))
-  .then(loadtemplate("body", '/../hbs/email_activate.hbs'))
-  .then(function(){
-
-    fs.readFile(__dirname + '/../hbs/index.hbs', 'utf8', function(err, data, model, tmpl){
-      if (err)
-        deferred.reject(err)
-
-      if (!!data){
-
-        // create a new Model for generate the activate email
-        model = {
-          header_text : "test Header text"
-          , footer_text : "test Footer text"
-          , title_tag : "Title of page"
-          , email : {
-              title : "You must active your account !"
-            , text : "For activate your account, just click on the next button."
-            , button : {
-                link : [BASE, "validateAccount/" ,dataEmail.token].join("")
-              , text : "Activer votre compte"
+    emailModel = {
+        template : {
+            name : "email_activate"
+          , content : {
+              header_text : "Welcome !"
+            , footer_text : "YOLO !! FUCK ME ! "
+            , body : {
+                title : "You must active your account for continue !"
+              , text : "For activate your account, you must just click on the next button."
+              , button : {
+                  link : [ROOTCLIENT, "validateAccount/" ,tokenJWT].join("")
+                , text : "Activer votre compte"
+              }
             }
           }
         }
-
-        for(var i in dataEmail)
-          model[i] = dataEmail[i]
-
-        tmpl = handlebars.compile(data)
-
-        deferred.resolve(tmpl(model))
+        , send : {
+            from: configEmail.sender
+          , to: emailValid
+          , subject: '[IMPORTANT] - Activate your registration and continue on our website, welcome !',
+        }
       }
-      else
-        deferred.reject("no data")
 
-    })
+      helpers.sendEmail(emailModel).then(onsuccess, onerror)
+
+      function onerror(err){
+        console.log("err : ",err);
+      }
+
+      function onsuccess(){
+        res.json({msg : "Your account has been created"})
+      }
+
   })
-
-  return deferred.promise
-}
-
-function loadtemplate(name, path, deferred) {
-  deferred = Q.defer()
-
-  if(!!path && !!name){
-    var p = Path.normalize( __dirname + path)
-
-    fs.readFile(p, 'utf8', function(err, data) {
-      if (err)
-      deferred.reject(err)
-
-      handlebars.registerPartial(name, data)
-      deferred.resolve(data)
-    })
-
-  }
-  else
-    console.error("HORROR")
-
-  return deferred.promise
 }

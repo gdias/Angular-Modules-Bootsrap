@@ -8,38 +8,35 @@ function signupController ($scope, $http, signupService){
   $scope.message = "Inscription"
   $scope.form = {}
   $scope.debug = true
+  $scope.form.exist = false
 
   $scope.checkEmailFormat = function(){
+
+      $scope.form.validEmailFormat = false
       console.log($scope.form.email," - args",arguments, $scope.form.emailvalid)
   }
 
   $scope.checkPwdForce = function() {
-    //console.log("controlPwdForce : ",controlPwdForce);
-    $scope.form.validPwd = signupService.verifForcePwd($scope.form.pwd)
+    $scope.form.validPwdSize = signupService.checkPwdSize($scope.form.pwd)
+    $scope.form.validPwdNum = signupService.checkPwdNum($scope.form.pwd)
   }
 
-  $scope.checkSame = function() {
-    //console.log("isSAME ? ",$scope.form.pwd," <==<=>==> ",$scope.form.pwdconfirm, "--> ",($scope.form.pwd == $scope.form.pwdconfirm ? true : false));
+  $scope.checkPwdSame = function() {
     $scope.form.validPwdConfirm = ($scope.form.pwd == $scope.form.pwdconfirm ? true : false)
   }
 
   $scope.checkEmailExist = function(){
-    //console.log("d : ",$scope.form.email)
-
     if (!!$scope.form.email)
       signupService.checkIfEmailExist($scope.form.email).then(function(data){
-        console.log("data chce =  ",data);
+        $scope.form.exist = data
         $scope.form.emailvalid = (!data ? true : false)
       })
-
-  //  console.log("emailvalid : ", $scope.form.emailvalid);
   }
 
 
   $scope.signUpUser = function(){
 
     $http.post("/api/user", $scope.form).then(function(response, validateUrl){
-      //console.log("token ",response.data.token);
 
       if (!!response.data.token)
         validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
@@ -53,8 +50,8 @@ function signupController ($scope, $http, signupService){
 
 }]
 
-module.exports.validateAccountController = ['$scope', '$http', '$routeParams', 'signupService',
-  function validateAccountController ($scope, $http, $routeParams, signupService){
+module.exports.validateAccountController = ['$scope', '$http', '$routeParams', 'signupService', '$window',
+  function validateAccountController ($scope, $http, $routeParams, signupService, $window){
 
     if (!!$routeParams.token){
       var token = $routeParams.token
@@ -85,7 +82,7 @@ module.exports.validateAccountController = ['$scope', '$http', '$routeParams', '
             $scope.result = data.msg
 
             setTimeout(function(){
-              location.href = "/"
+              $window.location.href = "/"
             }, 4000)
 
           }

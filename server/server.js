@@ -29,6 +29,8 @@ module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
   // configure Express
   app.use(morgan('dev'))
   app.use(cookieParser())
+  // app.use(bodyParser())
+  app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
   //app.use(i18n.init)
   app.use(bodyParser.json())
 

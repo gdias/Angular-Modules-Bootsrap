@@ -6,24 +6,29 @@
   <form ng-submit="signUpUser()" name="signUPform">
     <span class="error" ng-show="myForm.input.$error.required">Required!</span>
     <div>
-      <input type="email" placeholder="email" ng-model="form.email" name="email" ng-change="checkEmailFormat()" ng-blur="checkEmailExist()" ng-blur="checkEmailExist()" required>
+      <input type="email" placeholder="email" ng-model="form.email" name="email" ng-change="checkEmailExist()" ng-blur="checkEmailFormat()" required>
       <span ng-show="form.emailvalid">email not already used</span>
-    </div>
-    <div>
-      <input type="password" placeholder="Password" ng-model="form.pwd" name="pwd" ng-change="checkPwdForce()" required>
-      <div class="required" ng-hide="form.validPwd">
-        <ul>
-          <li>most 6 characters</li>
-          <li>most have one numeric characters</li>
-        </ul>
+      <div ng-show="form.exist">
+        you've already account ? <a href="#/signin">login you !</a>
       </div>
     </div>
-    <div>
-      <input type="password" placeholder="Password Confirm" ng-model="form.pwdconfirm" name="pwdconfirm" ng-change="checkSame()" required>
-      <span ng-show="form.validPwdConfirm">same pwd ok</span>
-    </div>
-    <div>
-      <input type="submit" value="Sign up now">
+    <div ng-hide="form.exist">
+      <div>
+        <input type="password" placeholder="Password" ng-model="form.pwd" name="pwd" required>
+        <div class="required" ng-hide="form.validPwd">
+          <ul>
+            <li ng-hide="form.validPwdSize">most 6 characters</li>
+            <li ng-hide="form.validPwdNum">most have one numeric characters</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <input type="password" placeholder="Password Confirm" ng-model="form.pwdconfirm" name="pwdconfirm" ng-change="checkPwdSame()" required>
+        <span ng-show="form.validPwdConfirm">same pwd ok</span>
+      </div>
+      <div>
+        <input type="submit" value="Sign up now">
+      </div>
     </div>
     <div ng-show="debug">
       form model : {{form | json}}

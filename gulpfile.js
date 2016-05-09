@@ -12,6 +12,7 @@ var gulp = require('gulp')
   , plumber = require("gulp-plumber")
   , express = require('express')
   , nodemon = require('gulp-nodemon')
+  , angularProtractor = require('gulp-angular-protractor')
   , lr
   , EXPRESS_ROOT = [__dirname, "/public"].join("")
   , EXPRESS_PORT = 8080
@@ -45,6 +46,18 @@ var notifyLivereload = function(event, fileName) {
 
 }
 
+gulp.task('protractor', function(callback) {
+    gulp.src(['./app/tests/*.js'])
+        .pipe(angularProtractor({
+            'configFile': './config/protractor.conf.js',
+            'debug': false,
+            'autoStartStopServer': true
+        }))
+        .on('error', function(e) {
+            console.log("E : ",e);
+        })
+        .on('end', callback);
+});
 
 gulp.task('connect', function() {
   require("./server/server")(EXPRESS_ROOT, EXPRESS_PORT)
@@ -101,6 +114,11 @@ gulp.task('watch', function () {
   gulp.watch(['./server/server.js', './public/**/*.html', './public/js/main.js', './public/css/styles.css'], notifyLivereload)
 })
 
-gulp.task('default', ['start', 'watch', 'browserify', 'sass']);
+gulp.task('watchTests', function () {
+  gulp.watch(['./app/**/*.js'], ['browserify'])
+  //gulp.watch(['./server/server.js', './public/**/*.html', './public/js/main.js', './public/css/styles.css'], notifyLivereload)
+})
 
+gulp.task('default', ['start', 'watch', 'browserify', 'sass']);
+gulp.task('test', ['browserify', 'watchTests', 'protractor'])
 gulp.task('prod', ['browserify', 'sass', 'compress'])

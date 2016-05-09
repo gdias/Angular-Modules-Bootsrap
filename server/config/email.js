@@ -1,15 +1,21 @@
 "use strict"
 
-var nodemailer  = require('nodemailer')
+var nodemailer        = require('nodemailer')
+  , smtpTransport     = require('nodemailer-smtp-transport')
+  , EMAILSERVER       = "localhost"
+
 
 module.exports = {
     sender      : "ADMIN <admin@internet.com>"
-  , server      : "localhost"
-  , transporter : function() {
-    var smtpConfig = {
-        host: 'localhost' //'smtp.gmail.com'
-      , port: 25
-    }
-    return nodemailer.createTransport(smtpConfig)
+  , server      : EMAILSERVER
+  , transporter : function(config) {
+
+      if (typeof config === "undefined")
+        config = {
+            host: EMAILSERVER //'smtp.gmail.com'
+          , port: 25
+        }
+
+      return nodemailer.createTransport(smtpTransport(config))
   }
 }

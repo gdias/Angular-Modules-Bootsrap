@@ -60,10 +60,17 @@ module.exports.routes = [
     })
     .when('/renewPassword/start', {
           templateUrl: 'partials/auth/renew_start.html'
+        , controller : 'renewControllerStart'
     })
     .when('/renewPassword/form', {
           templateUrl: 'partials/auth/renew_form.html'
         , controller: 'renewController'
+    })
+    .when('/renewPassword/validForm', {
+        templateUrl : 'partials/auth/renew_validForm.html'
+    })
+    .when('/renewPassword/validNotActive', {
+        templateUrl : 'partials/auth/renew_validNotActive.html'
     })
     .when('/renewPassword/valid/:token', {
           templateUrl: 'partials/auth/renew_valid.html'

@@ -1,23 +1,25 @@
 require('angular')
 var ngRoute = require('angular-route')
-var ngCookies = require('angular-cookies')
-var routes = require("./routes/routes").routes
-
-var app = angular.module('app', ['ngRoute', 'ngCookies'])
-    app.config(routes)
+  , ngCookies = require('angular-cookies')
+  , routes = require("./routes/routes").routes
+  , app = angular.module('app', ['ngRoute', 'ngCookies'])
+  , SiController = require("./components/signin/signinController")
+  , SuController = require("./components/signup/signupController")
 
 var homeController = require("./components/home/homeController").homeController
   , aboutController = require("./components/about/aboutController").aboutController
   , contactController = require("./components/contact/contactController").contactController
-  , signinController = require("./components/signin/signinController").signinController
-  , signupController = require("./components/signup/signupController").signupController
-  , validateAccountController = require("./components/signup/signupController").validateAccountController
+  , signinController = SiController.signinController
+  , signupController = SuController.signupController
+  , validateAccountController = SuController.validateAccountController
   , accountController = require("./components/account/accountController").accountController
   , menuController = require("./shared/menu/menuController").menuController
-  , renewController = require("./components/signin/signinController").renewController
-  , renewValidController = require("./components/signin/signinController").renewValidController
+  , renewController = SiController.renewController
+  , renewControllerStart = SiController.renewControllerStart
+  , renewValidController = SiController.renewValidController
   , signupService = require("./components/signup/signupService").signupService
 
+app.config(routes)
 
 app.controller('homeController', homeController)
 app.controller('menuController', menuController)
@@ -28,6 +30,7 @@ app.controller('signinController', signinController)
 app.controller('signupController', signupController)
 app.controller('validateAccountController', validateAccountController)
 app.controller('renewController', renewController)
+app.controller('renewControllerStart', renewControllerStart)
 app.controller('renewValidController', renewValidController)
 
 app.controller('accountController', accountController)
