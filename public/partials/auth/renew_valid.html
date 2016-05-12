@@ -1,13 +1,13 @@
-<div ng-hide="form.hide" class="ng-show">
-
+<div ng-show="form.error" class="ng-hide">
+  An error is occured. Please, contact us.
 </div>
 <div ng-show="form.show" class="ng-hide">
   This page allow you to change your password.
-  <form ng-submit="sendNewPass()">
-    <input type="password" ng-model = "form.pass" placeholder="New password" required />
-    <input type="password" ng-model = "form.passconfirm" placeholder="New password" required />
-    <input type="hidden" ng-model = "form.hash" value="{{hash}}" />
-    <a href="#" ng-click="showPass()">show the password</a>
+  <form ng-submit="sendFormNewPass()" ng-model="form">
+    <input type="password" ng-model="form.pass" placeholder="New password" required />
+    <input type="password" ng-model="form.passconfirm" placeholder="New password" required />
+    <input type="hidden" ng-model="form.token" value="{{token}}" />
+    <a href="#" ng-click="showPass($event)">show the password</a>
     <input type="submit" value="Renew password">
   </form>
 

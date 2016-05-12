@@ -1,4 +1,4 @@
 module.exports = {
     domain : "localhost"
-  , urlRootClient : "localhost:8080/#/"
+  , urlRootClient : "http://localhost:8080/#/"
 }

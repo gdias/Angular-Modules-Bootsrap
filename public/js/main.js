@@ -1,24 +1,26 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('angular')
 var ngRoute = require('angular-route')
-var ngCookies = require('angular-cookies')
-var routes = require("./routes/routes").routes
-
-var app = angular.module('app', ['ngRoute', 'ngCookies'])
-    app.config(routes)
+  , ngCookies = require('angular-cookies')
+  , routes = require("./routes/routes").routes
+  , app = angular.module('app', ['ngRoute', 'ngCookies'])
+  , SiController = require("./components/signin/signinController")
+  , SuController = require("./components/signup/signupController")
 
 var homeController = require("./components/home/homeController").homeController
   , aboutController = require("./components/about/aboutController").aboutController
   , contactController = require("./components/contact/contactController").contactController
-  , signinController = require("./components/signin/signinController").signinController
-  , signupController = require("./components/signup/signupController").signupController
-  , validateAccountController = require("./components/signup/signupController").validateAccountController
+  , signinController = SiController.signinController
+  , signupController = SuController.signupController
+  , validateAccountController = SuController.validateAccountController
   , accountController = require("./components/account/accountController").accountController
   , menuController = require("./shared/menu/menuController").menuController
-  , renewController = require("./components/signin/signinController").renewController
-  , renewValidController = require("./components/signin/signinController").renewValidController
+  , renewController = SiController.renewController
+  , renewControllerStart = SiController.renewControllerStart
+  , renewValidController = SiController.renewValidController
   , signupService = require("./components/signup/signupService").signupService
 
+app.config(routes)
 
 app.controller('homeController', homeController)
 app.controller('menuController', menuController)
@@ -29,6 +31,7 @@ app.controller('signinController', signinController)
 app.controller('signupController', signupController)
 app.controller('validateAccountController', validateAccountController)
 app.controller('renewController', renewController)
+app.controller('renewControllerStart', renewControllerStart)
 app.controller('renewValidController', renewValidController)
 
 app.controller('accountController', accountController)
@@ -83,30 +86,75 @@ var validEmail = require('../../../server/utils').validEmail
   , jwt = require("jsonwebtoken")
 
 
+module.exports.renewControllerStart = ['$scope', '$http', '$window',
+function renewControllerStart($scope, $http, $window){
+    // next step handler
+  $scope.nextStep = function(){
+
+    // generate an new token by server for show form for renew password
+    $http({
+        method : 'GET'
+      , url:"/api/user/renewpassstart"
+    }).then(function(response) {
+
+      // set the token in sessionStorage encoded in base64
+      if (!response.data.token){
+        console.error("Une erreur est survenue. Veuillez contacter le webmaster")
+        return false
+      }
+      var t = response.data.token
+
+      sessionStorage.setItem("renewVerif", JSON.stringify(btoa(t)))
+      $window.location.href = "/#/renewPassword/form"
+
+      // location
+    }, function(err){
+      if (!!err.data)
+        console.error(err.data)
+      else
+        console.log(err)
+    })
+
+  }
+}]
+
+
 module.exports.renewController = ['$scope', '$http', '$window', '$cookies', '$location', '$rootScope',
   function renewController ($scope, $http, $window, $cookies, $location, $rootScope){
 
     $scope.form = {}
 
-    $scope.renew = function(testEmail) {
+    if (sessionStorage.getItem("renewVerif") == null)
+      $window.location.href = "/"
+
+    $scope.renew = function(testEmail, token) {
       testEmail = new validEmail
 
       if (!!testEmail.control($scope.form.mail)) {
-        console.log("post email : ", $scope.form.mail);
-        $http.post(
-          "/api/user/renewPassword"
-          , {
-              email : $scope.form.mail
-            , step : 1
-          }
-        ).then(function(response){
-          console.log(response);
-          if (!response.data.error){
-            console.log();
-          }
-        })
+        token = atob(JSON.parse(sessionStorage.getItem("renewVerif")))
+        $http({
+            method: 'POST'
+            , url: '/api/user/renewpass'
+            , data: {
+                email : $scope.form.mail
+              , step : 1
+            }
+            , headers: {
+              'Authorization': ['Bearer ',token].join("")
+            }
+        }).then(
+          function(response){
 
-        // TODO : return token by mail, with email in parameter
+            // Redirect for display
+            $window.location.href = (!response.data.error
+              ? "/#/renewPassword/validForm"
+              : "/#/renewPassword/validNotActive")
+
+          }, function(err){
+            console.error(err)
+          }
+        )
+
 
       }
 
@@ -200,38 +248,35 @@ function signupController ($scope, $http, signupService){
   $scope.message = "Inscription"
   $scope.form = {}
   $scope.debug = true
+  $scope.form.exist = false
 
   $scope.checkEmailFormat = function(){
+
+      $scope.form.validEmailFormat = false
       console.log($scope.form.email," - args",arguments, $scope.form.emailvalid)
   }
 
   $scope.checkPwdForce = function() {
-    //console.log("controlPwdForce : ",controlPwdForce);
-    $scope.form.validPwd = signupService.verifForcePwd($scope.form.pwd)
+    $scope.form.validPwdSize = signupService.checkPwdSize($scope.form.pwd)
+    $scope.form.validPwdNum = signupService.checkPwdNum($scope.form.pwd)
   }
 
-  $scope.checkSame = function() {
-    //console.log("isSAME ? ",$scope.form.pwd," <==<=>==> ",$scope.form.pwdconfirm, "--> ",($scope.form.pwd == $scope.form.pwdconfirm ? true : false));
+  $scope.checkPwdSame = function() {
     $scope.form.validPwdConfirm = ($scope.form.pwd == $scope.form.pwdconfirm ? true : false)
   }
 
   $scope.checkEmailExist = function(){
-    //console.log("d : ",$scope.form.email)
-
     if (!!$scope.form.email)
       signupService.checkIfEmailExist($scope.form.email).then(function(data){
-        console.log("data chce =  ",data);
+        $scope.form.exist = data
         $scope.form.emailvalid = (!data ? true : false)
       })
-
-  //  console.log("emailvalid : ", $scope.form.emailvalid);
   }
 
 
   $scope.signUpUser = function(){
 
     $http.post("/api/user", $scope.form).then(function(response, validateUrl){
-      //console.log("token ",response.data.token);
 
       if (!!response.data.token)
         validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
@@ -245,8 +290,8 @@ function signupController ($scope, $http, signupService){
 
 }]
 
-module.exports.validateAccountController = ['$scope', '$http', '$routeParams', 'signupService',
-  function validateAccountController ($scope, $http, $routeParams, signupService){
+module.exports.validateAccountController = ['$scope', '$http', '$routeParams', 'signupService', '$window',
+  function validateAccountController ($scope, $http, $routeParams, signupService, $window){
 
     if (!!$routeParams.token){
       var token = $routeParams.token
@@ -277,7 +322,7 @@ module.exports.validateAccountController = ['$scope', '$http', '$routeParams', '
             $scope.result = data.msg
 
             setTimeout(function(){
-              location.href = "/"
+              $window.location.href = "/"
             }, 4000)
 
           }
@@ -310,10 +355,8 @@ module.exports.signupService = ["$http", "$q",
       .then(handleSuccess, handleError)
 
       function handleSuccess (response, data) {
-        // console.log(response.data);
         data = (!!response && !!response.data ? response.data : false)
 
-        console.log("handleSuccess (checkIfEmailExist) : ", data)
         deferred.resolve(data)
       }
 
@@ -325,29 +368,84 @@ module.exports.signupService = ["$http", "$q",
       return deferred.promise
     }
 
+    function checkPwdSize(pwd, min, max) {
+      debugger
+      min = 6
+      max = 50
+      return !!pwd ? pwd.length > min  && pwd.length < max ? true : false : false
+    }
 
+    function checkPwdNum(pwd) {
+      return !!pwd && !!pwd.match(/\d+/g) ? true : false
+    }
 
-    function verifForce (pwd, sizeMin, find) {
-      if (!!pwd || typeof pwd !== "undefined"){
-      // 1. check size
-      // 2. check number
-      sizeMin = 6
+    function emailFormat(email, self) {
+      self = this
+      // TODO
+      // 1. has @
+      // 2. has domain
+      // 3. has ext
 
-        if ( pwd.length >= sizeMin ) {
-          find = pwd.match(/\d+/g)
-          if(find != null)
-              return true
-            else
-              return false
-        } else
-          return false
-      } else
-        return false
+      if (!!email) {
+
+        self.hasAt = (function(){return self.at !== -1 ? true : false})()
+        self.hasPointExt = (function(){return self.point !== -1 ? true : false})()
+        self.limitSize = (function(){return emaiL < 100 ? true : false})()
+
+        self.mail = email
+        self.at = email.indexOf("@")
+        self.point = email.lastIndexOf(".")
+        self.emaiL = self.email.length
+        self.fullDomain = email.substring(self.at, self.emaiL)
+        self.ext = email.substring(self.point, self.emaiL)
+        self.extSize = (self.ext.length > 6 ? false : true)
+
+        // control htmlchars
+
+        if (self.emaiL > 4)
+          if(!self.hasAt) // Control has @
+            self.errorHandler(0)
+          else if(!self.hasPointExt) // Control has . after @
+            self.errorHandler(1)
+          else if(!self.limitSize) // Control if size of email is under 100
+            self.errorHandler(2)
+          else if(!self.extSize) // Control size of extension
+            self.errorHandler(3)
+
+        //self.greatEmailFormat()
+
+        self.errorHandler = function(err, errMsg) {
+          errMsg = null
+          if(!!err)
+            switch (err) {
+              case 0 :
+                console.error('This email has no @ !')
+                break;
+              case 1 :
+                console.error('This email has no extention !')
+                break;
+              case 2 :
+                console.error('This email is too long !')
+                break;
+              case 3 :
+                console.error('The extention of this email has bad format !')
+                break;
+            }
+          else
+            return null
+
+          console.error(err)
+        }
+
+      }
+
     }
 
     return {
-        checkIfEmailExist : emailExist
-      , verifForcePwd : verifForce
+    checkIfEmailExist : emailExist//
+      , checkPwdSize : checkPwdSize
+      , checkPwdNum : checkPwdNum
+      , checkEmailFormat : emailFormat
     }
 
   }
@@ -416,10 +514,17 @@ module.exports.routes = [
     })
     .when('/renewPassword/start', {
           templateUrl: 'partials/auth/renew_start.html'
+        , controller : 'renewControllerStart'
     })
     .when('/renewPassword/form', {
           templateUrl: 'partials/auth/renew_form.html'
         , controller: 'renewController'
+    })
+    .when('/renewPassword/validForm', {
+        templateUrl : 'partials/auth/renew_validForm.html'
+    })
+    .when('/renewPassword/validNotActive', {
+        templateUrl : 'partials/auth/renew_validNotActive.html'
     })
     .when('/renewPassword/valid/:token', {
           templateUrl: 'partials/auth/renew_valid.html'

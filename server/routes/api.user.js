@@ -6,7 +6,6 @@ var express           = require('express')
   , jwt               = require("jsonwebtoken")
   , Hash              = require('../utils').hash
   , router            = express.Router()
-  , key               = require("../config/auth").key
   , nodemailer        = require('nodemailer')
   , smtpTransport     = require('nodemailer-smtp-transport')
   , validEmail        = require('../utils').validEmail
@@ -15,9 +14,12 @@ var express           = require('express')
   , bcrypt            = require('bcrypt-nodejs')
   , fs                = require('fs-promise')
   , configEmail       = require("../config/email")
-  , helpers       = require("./helpers")
+  , sendActivation    = require("../emails/auth").sendAccountActivationEmail
+  , sendRenewPwd      = require("../emails/auth").sendRenewPasswordAccess
+  , helpers           = require("./helpers")
   , Path              = require("path")
   , Q                 = require("q")
+  , KEY               = require("../config/auth").key
   , ROOTCLIENT        = require("../config/main").urlRootClient // Url Client Root
   , DOMAIN            = require("../config/main").domain
 
@@ -31,20 +33,23 @@ module.exports.allusers = function (req, res) {
   })
 }
 
-module.exports.authnewpass = function(req, res, hash) {
-  hash = (!!req.user.hash ? req.user.hash : false)
-  if (hash){
+module.exports.authnewpass = function(req, res) {
+  console.log("user ::> ", req.user);
+  var hash = (!!req.user.hash ? req.user.hash : false)
+
+  if (!!hash){
     // get informations user
     User.find({"hash": hash}, function(err, docs, user, tokenJWT) {
       if (!!err) throw err
       if (!!docs) {
         user = docs[0]
+        
         // get Hash and send new token
         tokenJWT = jwt.sign({
             expiresIn : "1d"
           , email : user.email
           , hash : hash
-        }, key)
+        }, KEY)
 
         res.json({"token" : tokenJWT})
       }
@@ -62,7 +67,7 @@ module.exports.renewpassstart = function(req, res) {
 
   var tokenJWT = jwt.sign({
       expiresIn : "1d"
-  }, key)
+  }, KEY)
 
   console.log("token secure for renew pass : ", tokenJWT)
   // just control origin of request and send an new token
@@ -105,14 +110,23 @@ module.exports.renewpass = function(req, res){
                             expiresIn : "1d"
                           , email : user.email
                           , hash : newH
-                        }, key)
+                        }, KEY)
 
-                        res.json({"token" : token})
+                        // res.json({"token" : token})
 
                         // http://localhost:8080/#renewPassword/valid/[TOKEN]
 
                         // send email with an new token with hash in link
+                        sendRenewPwd(user.email, token).then(sendOk, errorHandler)
 
+                        function sendOk() {
+                          res.json({"valid" : 1})
+                        }
+
+                        function errorHandler(err) {
+                          console.log(err)
+                          res.sendStatus(500)
+                        }
                       }
 
                     })
@@ -233,32 +247,37 @@ module.exports.user = function(req, res) {
       , hash : newHash
       , email : emailValid
     }
-    , key)
+    , KEY)
 
-    emailModel = {
-        template : {
-            name : "email_activate"
-          , content : {
-              header_text : "Welcome !"
-            , footer_text : "YOLO !! FUCK ME ! "
-            , body : {
-                title : "You must active your account for continue !"
-              , text : "For activate your account, you must just click on the next button."
-              , button : {
-                  link : [ROOTCLIENT, "validateAccount/" ,tokenJWT].join("")
-                , text : "Activer votre compte"
-              }
-            }
-          }
-        }
-        , send : {
-            from: configEmail.sender
-          , to: emailValid
-          , subject: '[IMPORTANT] - Activate your registration and continue on our website, welcome !',
-        }
-      }
 
-      helpers.sendEmail(emailModel).then(onsuccess, onerror)
+    sendActivation(emailValid, tokenJWT).then(onsuccess, onerror)
+
+
+      //
+      // emailModel = {
+      //   template : {
+      //       name : "email_activate"
+      //     , content : {
+      //         header_text : "Welcome !"
+      //     //, footer_text : "Custom Footer"
+      //       , body : {
+      //           title : "You must active your account for continue !"
+      //         , text : "For activate your account, you must just click on the next button."
+      //         , button : {
+      //             link : [ROOTCLIENT, "validateAccount/" ,tokenJWT].join("")
+      //           , text : "Activer votre compte"
+      //         }
+      //       }
+      //     }
+      //   }
+      //   , send : {
+      //       from: configEmail.sender
+      //     , to: emailValid
+      //     , subject: '[IMPORTANT] - Activate your registration and continue on our website, welcome !',
+      //   }
+      // }
+      //
+      // helpers.sendEmail(emailModel).then(onsuccess, onerror)
 
       function onerror(err){
         console.log("err : ",err);

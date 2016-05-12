@@ -1,18 +1,19 @@
 "use strict"
 
-var express     = require('express')
-  , router      = express.Router()
-  , User        = require("../models/user")
-  , jwt         = require("jsonwebtoken")
-  , db          = require("../database").db
-  , hash        = require('../utils').hash
-  , key         = require("../config/auth").key
-  , bcrypt      = require('bcrypt-nodejs')
-  , expressJwt  = require("express-jwt")
+var express           = require('express')
+  , router            = express.Router()
+  , User              = require("../models/user")
+  , jwt               = require("jsonwebtoken")
+  , db                = require("../database").db
+  , hash              = require('../utils').hash
+  , KEY               = require("../config/auth").key
+  , bcrypt            = require('bcrypt-nodejs')
+  , expressJwt        = require("express-jwt")
+  , sendActivation    = require("../emails/auth").sendAccountActivationEmail
 
 
 module.exports.auth = function(req, res) {
-  
+
   var em = req.body.email
   var pw = req.body.pwd
 
@@ -25,23 +26,58 @@ module.exports.auth = function(req, res) {
         if(bcrypt.compareSync(pw, passCrypted)) {
 
           if (!!docs[0].active) {
+
             tokenJWT = jwt.sign({
                 expiresIn : "7d"
               , username : req.body.email
-            }, key)
+            }, KEY)
 
             res.json(tokenJWT)
           }
-          else
-            res.json({error:'Account not validated'})
+          else {
+            // create an other token for validate account
+            tokenJWT = jwt.sign({
+                expiresIn : "2d"
+              , hash : docs[0].hash
+              , email : docs[0].email
+            }
+            , KEY)
+
+            res.json({type:2, token:tokenJWT, error:'Account not validated'})
+          }
 
         } else {
-          res.json({error:'Bad password'})
+          res.json({type:1, error:'Bad password'})
         }
       } else {
-        res.json({error:'Please, create an account'})
+        res.json({type:0, error:'Please, create an account'})
       }
   })
+}
+
+module.exports.resendActivateEmail = function(req, res) {
+
+  if (!req.user || !req.user.hash || !req.user.email)
+    errorHandler()
+
+  // create a new token for validate account
+  var tokenJWT = jwt.sign({
+                    expiresIn : "2d"
+                  , hash : req.user.hash
+                  , email : req.user.email
+                 }, KEY)
+
+  // ReSend Email
+  sendActivation(req.user.email, tokenJWT).then(sendOk, errorHandler)
+
+  function sendOk() {
+    res.json({valid : 1})
+  }
+
+  function errorHandler(){
+    res.sendStatus(500)
+  }
+
 }
 
 

@@ -8,6 +8,7 @@ var express     = require('express')
 
 router.post('/auth', require('./api.auth').auth)
 router.get('/auth', expressJwt({secret:key}), require('./api.auth').authValid)
+router.post('/auth/rae', expressJwt({secret:key}), require('./api.auth').resendActivateEmail)
 
 router.get('/user/setadmin/:id', require('./api.user').setAdmin)
 

@@ -4,7 +4,7 @@
 </p>
 <form id="signin" ng-submit="auth()">
   <div>
-    <input type="text" id="email" placeholder="Email" ng-model="form.email" required /> &nbsp;
+    <input type="email" id="email" placeholder="Email" ng-model="form.email" required /> &nbsp;
     <input type="password" id="pwd" placeholder="Password" ng-model="form.pwd" required /> &nbsp;
     <input type="submit" value="Sign In !" /> <br>
     <input type="checkbox" id="persist" ng-model="form.persist" checked />&nbsp;<label for="persist">Persist sign in</label>
@@ -13,5 +13,8 @@
   </div>
   <div class="error">
     {{error}}
+    <span ng-show="activationMailStatus">
+      <a href="#" ng-click="resendActivateEmail($event)" target="_blank">{{activateLinkText}}</a>
+    </span>
   </div>
 </form>
