@@ -20,11 +20,11 @@ module.exports.sendAccountActivationEmail = function (to, token, a, emailModel, 
           header_text : "Welcome !"
       //, footer_text : "Custom Footer"
         , body : {
-            title : "You must active your account for continue !"
-          , text : "For activate your account, you must just click on the next button."
+            title : "You must active your account to continue !"
+          , text : "To activate your account, you must click on the next button."
           , button : {
               link : [ROOTCLIENT, "validateAccount/" ,token].join("")
-            , text : "Activer votre compte"
+            , text : "Activate your account"
           }
         }
       }
@@ -55,7 +55,7 @@ module.exports.sendRenewPasswordAccess = function (to, token, a, emailModel, ema
           header_text : "You wish to change your password ?"
       //, footer_text : "Custom Footer"
         , body : {
-            title : "For change your password, follow the guide ! "
+            title : "To change your password, follow the procedure !"
           , text : "The first step consist to click on the link at bottom of this email. <br/>\
                     If you've not do this request, please ignore this email and contact us."
           , button : {
