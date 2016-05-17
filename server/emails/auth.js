@@ -53,11 +53,10 @@ module.exports.sendRenewPasswordAccess = function (to, token, a, emailModel, ema
         name : "email_renew_1"
       , content : {
           header_text : "You wish to change your password ?"
-      //, footer_text : "Custom Footer"
         , body : {
             title : "To change your password, follow the procedure !"
-          , text : "The first step consist to click on the link at bottom of this email. <br/>\
-                    If you've not do this request, please ignore this email and contact us."
+          , text : "Please click on the link at the bottom of this email to reset your password. <br/>\
+                    If you didn't initiate this request, please ignore this email or contact us."
           , button : {
               link : [ROOTCLIENT, "renewPassword/valid/" ,token].join("")
             , text : "Change your password"
