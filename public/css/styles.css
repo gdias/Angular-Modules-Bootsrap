@@ -1,3 +1,18 @@
+.required {
+  position: absolute;
+  left: 200px;
+  top: 0;
+  background: #EFEFEF;
+  padding: 10px;
+  border: 1px solid #D2D2D2; }
+  .required ul {
+    list-style: none;
+    padding: 0;
+    margin: 0; }
+
+.password-item {
+  position: relative; }
+
 .container {
   padding-top: 80px; }
 

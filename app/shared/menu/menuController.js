@@ -12,11 +12,13 @@ module.exports.menuController = ['$scope', '$http', '$rootScope', function menuC
   $rootScope.$on('updateMenuEvent', function (event, data) {
     console.log("emit event for menu ", $rootScope.auth);
 
-    if ($rootScope.auth)
+    if ($rootScope.auth) {
+      console.log("template :: ",$scope.template);
       $scope.template = {
           name : "account"
         , url : "'partials/commons/menuAccount.html'"
       }
+    }
   })
 
 }]

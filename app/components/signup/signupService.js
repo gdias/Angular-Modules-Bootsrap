@@ -24,7 +24,6 @@ module.exports.signupService = ["$http", "$q",
     }
 
     function checkPwdSize(pwd, min, max) {
-      debugger
       min = 6
       max = 50
       return !!pwd ? pwd.length > min  && pwd.length < max ? true : false : false

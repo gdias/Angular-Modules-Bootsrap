@@ -6,7 +6,41 @@ var helpers      = require("../routes/helpers")
   , Q            = require("q")
 
 
-module.exports.sendAccountActivationEmail = function (to, token, a, emailModel, emailTo) {
+
+module.exports.sendValidRenewPassword = function(to, emailModel, emailTo) {
+
+    var deferred = Q.defer()
+
+    if (typeof to !== "string") deferred.reject("Bad arguments")
+    else emailTo = to
+
+    emailModel = {
+      template : {
+          name : "email_default"
+        , content : {
+            header_text : "Your password has been changed !"
+          , body : {
+              title : "You have a new password"
+            , text : "Now, you can to navigate on our wonderful website with your beautiful new password."
+            , button : {
+                link : [ROOTCLIENT, "signin"].join("")
+              , text : "Sign in"
+            }
+          }
+        }
+      }
+      , send : {
+          from: configEmail.sender
+        , to: emailTo
+        , subject: '[IMPORTANT] - Your password has been changed'
+      }
+    }
+
+    return helpers.sendEmail(emailModel)
+
+}
+
+module.exports.sendAccountActivationEmail = function (to, token, emailModel, emailTo) {
 
   var deferred = Q.defer()
 
@@ -15,9 +49,9 @@ module.exports.sendAccountActivationEmail = function (to, token, a, emailModel, 
 
   emailModel = {
     template : {
-        name : "email_activate"
+        name : "email_default"
       , content : {
-          header_text : "Welcome !"
+          header_text : "Welcome ! "
       //, footer_text : "Custom Footer"
         , body : {
             title : "You must active your account to continue !"
@@ -32,7 +66,7 @@ module.exports.sendAccountActivationEmail = function (to, token, a, emailModel, 
     , send : {
         from: configEmail.sender
       , to: emailTo
-      , subject: '[WELCOME] - Activate your registration and continue on our website.'
+      , subject: '[REGISTRATION] - Activate your registration and continue on our website.'
     }
   }
 
@@ -50,7 +84,7 @@ module.exports.sendRenewPasswordAccess = function (to, token, a, emailModel, ema
 
   emailModel = {
     template : {
-        name : "email_renew_1"
+        name : "email_default"
       , content : {
           header_text : "You wish to change your password ?"
         , body : {

@@ -3,15 +3,32 @@
 var jwt = require("jsonwebtoken")
 //var i18n = require("i18n")
 
-module.exports.signupController = ['$scope', '$http', 'signupService',
-function signupController ($scope, $http, signupService){
+module.exports.signupController = ['$scope', '$http', 'signupService', '$window',
+function signupController ($scope, $http, signupService, $window){
   $scope.message = "Inscription"
   $scope.form = {}
   $scope.debug = true
   $scope.form.exist = false
+  $scope.form.validPass = false
+
+  $scope.$watch('form.validPwdSize', function() {
+      console.log('validPwdSize has changed!');
+  });
+
+  $scope.$watch('form.validPwdNum', function() {
+      console.log('validPwdNum has changed!');
+  });
+
+
+  $scope.focusPassValid = function() {
+    $scope.form.validPass = true
+  }
+
+  $scope.blurPassValid = function() {
+    $scope.form.validPass = false
+  }
 
   $scope.checkEmailFormat = function(){
-
       $scope.form.validEmailFormat = false
       console.log($scope.form.email," - args",arguments, $scope.form.emailvalid)
   }
@@ -35,17 +52,36 @@ function signupController ($scope, $http, signupService){
 
 
   $scope.signUpUser = function(){
+    console.log($scope.form);
 
-    $http.post("/api/user", $scope.form).then(function(response, validateUrl){
+    if (!!$scope.form.validPwdSize &&
+        !!$scope.form.validPwdConfirm &&
+        !!$scope.form.emailvalid &&
+        !!$scope.form.validPwdNum) {
 
-      if (!!response.data.token)
-        validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
+      $http.post("/api/user", $scope.form).then(function(response, validateUrl){
 
-      console.log("use this url for validate your new account : ", validateUrl);
-    }, function(err){
-      console.log(err);
-    })
+        console.log("data : ", response.data);
 
+        if (!!response.data)
+          // validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
+
+        // Change view and show message for to have send an email of confirmation
+        $window.location.href = "/signup/valid"
+
+
+      }, function(err){
+        console.log(err);
+      })
+    } else {
+
+        if (!$scope.form.validPwdSize)
+          $scope.form.error = "The password that you have choose, is not enough long. The security required minimum 6 characters."
+        else if (!$scope.form.validPwdNum)
+          $scope.form.error = "Your password have not an numerical characters. The security required minimum 1 number."
+        else if (!$scope.form.validPwdConfirm)
+          $scope.form.error = "The password are not same. Please confirm your password before continue."
+    }
   }
 
 }]

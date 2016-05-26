@@ -12,9 +12,10 @@
     <a href="#/renewPassword/start">Password lost ?</a>
   </div>
   <div class="error">
-    {{error}}
+    {{error}} <br>
     <span ng-show="activationMailStatus">
       <a href="#" ng-click="resendActivateEmail($event)" target="_blank">{{activateLinkText}}</a>
+      {{form.validresend}}
     </span>
   </div>
 </form>

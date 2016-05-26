@@ -6,25 +6,28 @@
   <form ng-submit="signUpUser()" name="signUPform">
     <span class="error" ng-show="myForm.input.$error.required">Required!</span>
     <div>
-      <input type="email" placeholder="email" ng-model="form.email" name="email" ng-change="checkEmailExist()" ng-blur="checkEmailFormat()" required>
+      <input type="email" placeholder="email" ng-model="form.email" name="email" ng-change="checkEmailExist()" required>
       <span ng-show="form.emailvalid">email not already used</span>
       <div ng-show="form.exist">
         you've already account ? <a href="#/signin">login you !</a>
       </div>
     </div>
     <div ng-hide="form.exist">
-      <div>
-        <input type="password" placeholder="Password" ng-model="form.pwd" name="pwd" required>
-        <div class="required" ng-hide="form.validPwd">
+      <div class="password-item">
+        <input type="password" placeholder="Password" ng-model="form.pwd" name="pwd" ng-change="checkPwdForce()" ng-focus="focusPassValid()" ng-blur="blurPassValid()" required>
+        <div class="required" ng-show="form.validPass">
           <ul>
-            <li ng-hide="form.validPwdSize">must 6 characters</li>
-            <li ng-hide="form.validPwdNum">must have one numeric characters</li>
+            <li ng-hide="form.validPwdSize">6 characters min</li>
+            <li ng-hide="form.validPwdNum">One numeric characters required</li>
           </ul>
         </div>
       </div>
       <div>
         <input type="password" placeholder="Password Confirm" ng-model="form.pwdconfirm" name="pwdconfirm" ng-change="checkPwdSame()" required>
         <span ng-show="form.validPwdConfirm">same pwd ok</span>
+      </div>
+      <div>
+        {{form.error}}
       </div>
       <div>
         <input type="submit" value="Sign up now">

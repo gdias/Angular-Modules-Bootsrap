@@ -82,14 +82,19 @@ module.exports.homeController = ['$scope', '$http', function homeController ($sc
 },{}],6:[function(require,module,exports){
 "use strict"
 
+//require('angular')
+
 var validEmail = require('../../../server/utils').validEmail
   , jwt = require("jsonwebtoken")
+  , $ = angular.element
 
 
 module.exports.renewControllerStart = ['$scope', '$http', '$window',
 function renewControllerStart($scope, $http, $window){
     // next step handler
-  $scope.nextStep = function(){
+  $scope.nextStep = function(e){
+
+    e.preventDefault()
 
     // generate an new token by server for show form for renew password
     $http({
@@ -102,6 +107,7 @@ function renewControllerStart($scope, $http, $window){
         console.error("Une erreur est survenue. Veuillez contacter le webmaster")
         return false
       }
+
       var t = response.data.token
 
       sessionStorage.setItem("renewVerif", JSON.stringify(btoa(t)))
@@ -165,26 +171,64 @@ module.exports.renewController = ['$scope', '$http', '$window', '$cookies', '$lo
 ]
 
 
-module.exports.renewValidController = ['$scope', '$http', '$routeParams',
-  function renewValidController($scope, $http, $routeParams, token) {
+module.exports.renewValidController = ['$scope', '$http', '$routeParams', '$document',
+  function renewValidController($scope, $http, $routeParams, $document, token, passwordsInput) {
 
     if (!!$routeParams.token){
       token = $routeParams.token
-      console.log("token : ",token);
-      $http({method: 'GET', url: '/api/authnewpass', headers: {
+      $scope.form = {}
+      $http({method: 'GET', url: '/api/user/authnewpass', headers: {
           'Authorization': ['Bearer ',token].join("")}
       }).then(authOk, authNok)
 
-      function authOk() {
-        // show form
+      function authOk(response) {
+        $scope.form.show = true
+        $scope.form.token = response
         console.log("show the form");
-
-
       }
 
       function authNok() {
+        $scope.form.error = true
         console.error("Auth for change password has failed")
       }
+
+      passwordsInput = $document.find("input[type=password]")
+
+      $scope.showPass = function(e) {
+        e.preventDefault();
+
+        (function switchType() {
+          console.log("passwordsInput :: ", passwordsInput);
+          passwordsInput.each(function(){
+            console.log(arguments)
+
+          })
+        })()
+
+      }
+
+      $scope.sendFormNewPass = function() {
+
+        if (!$scope.form.token)
+          return false
+
+        var token = $scope.form.token
+
+
+        $http({
+            method: 'POST'
+            , url: '/api/user/renewpass'
+            , data: {
+                email : $scope.form.mail
+              , step : 1
+            }
+            , headers: {
+              'Authorization': ['Bearer ',token].join("")
+            }
+        })
+
+      }
+
       //var testDecode = jwt.verify(token)
       //console.log("tokenize :: ",testDecode);
 
@@ -201,7 +245,7 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
   $scope.message = "Authentication"
   $scope.form = {}
   $scope.form.persist = true
-
+  $scope.activationMailStatus = false
   function authOk(){
     // get a localStorage with token
     $rootScope.auth = true
@@ -229,10 +273,38 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
         }).then(authOk, authNok)
 
       } else {
+          if (response.data.type === 2) {
+
+            var t = response.data.token
+
+            $scope.activationMailStatus = true
+
+            $scope.resendActivateEmail = function(e) {
+              e.preventDefault()
+              // send request with token
+              //console.log("token : ",t);
+
+              $http({method: 'POST', url: '/api/auth/rae', headers: {
+                  'Authorization': ['Bearer ',t].join("")}
+              }).then(arOK, arNOK)
+
+              function arOK(){
+                console.log("Resend RAE OK");
+              }
+
+              function arNOK(){
+                console.error("Resend NOK");
+              }
+
+            }
+
+            $scope.activateLinkText = "Resend Activation Email"
+          }
           $scope.error = response.data.error
       }
     })
   }
+
 
 
 }]

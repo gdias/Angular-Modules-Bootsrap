@@ -22,6 +22,7 @@ router.get('/user/authnewpass', expressJwt({secret:key}), require('./api.user').
 router.get('/user/renewpassstart', require('./api.user').renewpassstart)
 
 router.post('/user/renewpass', expressJwt({secret:key}), require('./api.user').renewpass)
+router.post('/user/renewpasschange', expressJwt({secret:key}), require('./api.user').renewpasschange)
 router.post('/user/validate', expressJwt({secret:key}), require('./api.user').validate)
 
 //router.get('/user/:user_id', require('./api.user').getuser)

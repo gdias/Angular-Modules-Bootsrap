@@ -30,12 +30,13 @@ var checkLoggedin = function($q, $timeout, $http, $location, $rootScope, $cookie
 }
 
 
-module.exports.routes = [
-    '$routeProvider'
-  , function($routeProvider) {
+module.exports.config = [
+    '$routeProvider', '$locationProvider'
+  , function($routeProvider, $locationProvider) {
+
     // Router
     $routeProvider
-    .when('/home', {
+    .when('/', {
           templateUrl: 'partials/home.html'
         , controller: 'homeController'
     })
@@ -54,6 +55,9 @@ module.exports.routes = [
     .when('/signup', {
           templateUrl: 'partials/auth/signup.html'
         , controller: 'signupController'
+    })
+    .when('/signup/valid', {
+          templateUrl: 'partials/auth/signup_valid.html'
     })
     .when('/validateAccount/:token', {
           templateUrl: 'partials/auth/validateAccount.html'
@@ -76,7 +80,9 @@ module.exports.routes = [
           templateUrl: 'partials/auth/renew_valid.html'
         , controller: 'renewValidController'
     })
-
+    .when('/renewPassword/validChangeOk', {
+        templateUrl : 'partials/auth/renew_validOk.html'
+    })
     .when('/account', {
           templateUrl: 'partials/secure/account.html'
         , controller: 'accountController'
@@ -85,7 +91,15 @@ module.exports.routes = [
           }
     })
     .otherwise({
-        redirectTo: '/home'
+        redirectTo: '/'
     })
+
+    // Remove Hash on routes
+    $locationProvider.html5Mode({
+        enabed : true
+      , requireBase: false
+    })
+
+
   }
 ]

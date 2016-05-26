@@ -16,6 +16,7 @@ var express           = require('express')
   , configEmail       = require("../config/email")
   , sendActivation    = require("../emails/auth").sendAccountActivationEmail
   , sendRenewPwd      = require("../emails/auth").sendRenewPasswordAccess
+  , sendValidRenewPwd = require("../emails/auth").sendValidRenewPassword
   , helpers           = require("./helpers")
   , Path              = require("path")
   , Q                 = require("q")
@@ -43,7 +44,7 @@ module.exports.authnewpass = function(req, res) {
       if (!!err) throw err
       if (!!docs) {
         user = docs[0]
-        
+        console.log("user : ",user);
         // get Hash and send new token
         tokenJWT = jwt.sign({
             expiresIn : "1d"
@@ -57,33 +58,24 @@ module.exports.authnewpass = function(req, res) {
   }
 }
 
-
+// Start procedure to change password
 module.exports.renewpassstart = function(req, res) {
-
-  console.log(">>> req.fresh ", req.fresh);
-  console.log(">>> req.xhr ", req.xhr);
-
-  //console.log(" --> ", req.hostname," === ",DOMAIN)
 
   var tokenJWT = jwt.sign({
       expiresIn : "1d"
   }, KEY)
 
-  console.log("token secure for renew pass : ", tokenJWT)
   // just control origin of request and send an new token
-
   if (req.hostname === DOMAIN)
     res.json({"token" : tokenJWT})
   else
     res.sendStatus(401)
-
 }
 
+// send an token for access to form To change password
 module.exports.renewpass = function(req, res){
   var emailControlled,
       verif = new validEmail
-    //  console.log("content type > ", req.get('Content-Type'));
-    //  console.log("body > ",req.body)
 
   if (!!req.body.email) {
     emailControlled = verif.control(req.body.email)
@@ -111,10 +103,6 @@ module.exports.renewpass = function(req, res){
                           , email : user.email
                           , hash : newH
                         }, KEY)
-
-                        // res.json({"token" : token})
-
-                        // http://localhost:8080/#renewPassword/valid/[TOKEN]
 
                         // send email with an new token with hash in link
                         sendRenewPwd(user.email, token).then(sendOk, errorHandler)
@@ -146,6 +134,72 @@ module.exports.renewpass = function(req, res){
 
 }
 
+
+module.exports.renewpasschange = function(req, res) {
+  if (!!req.body && !!req.user) {
+    // 1. control data
+    var mail = req.user.email
+    var h = req.user.hash
+    var newPass = req.body.pwd
+    var newPassConfirm = req.body.vpwd
+
+    if (newPass != newPassConfirm)
+      res.json({"error" : "The password confirm is not same than the password. Please confirm your new password"})
+
+
+    User.find(
+      {hash : h}
+    , function (err, docs, user, nPass) {
+        if (!!docs.length) {
+          user = docs[0]
+
+          if (!!user.active) {
+            nPass = bcrypt.hashSync(newPass)
+
+            if (user.pass === nPass || user.oldPass == nPass)
+              res.json({"error" : "Your new password is same that old password. Please, could you to choose an other password"})
+
+            User.update(
+              { "_id" : user._id }
+              , {
+                  pass : nPass
+                , oldPass : user.pass
+              }
+              , function(err, stats) {
+
+                if(!!err) throw(err)
+
+                if(!!stats.ok) {
+
+                  // Send email : To inform the user that his password has been changed
+                  sendValidRenewPwd(user.email).then(sendOk, errorHandler)
+
+                  function sendOk() {
+
+                    // TODO : remove hash of account for more secure process
+
+                    res.json({"valid" : 1})
+                  }
+
+                  function errorHandler(err) {
+                    console.log(err)
+                    res.sendStatus(500)
+                  }
+
+                }
+              }
+            )
+
+          } else {
+            res.json({"error" : "Your acccount is not actived, you can't change the password"})
+          }
+        }
+      }
+    )
+
+  }
+}
+// Service method
 module.exports.verifyEmail = function(req, res, email){
   if (!!req.body && !!req.body.email) {
     email = req.body.email
@@ -155,7 +209,6 @@ module.exports.verifyEmail = function(req, res, email){
     })
   }
 }
-
 
 module.exports.validate = function(req, res) {
   console.log("validate : ", req.user);

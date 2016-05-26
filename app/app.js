@@ -1,10 +1,13 @@
 require('angular')
+
 var ngRoute = require('angular-route')
   , ngCookies = require('angular-cookies')
-  , routes = require("./routes/routes").routes
+  , routes = require("./routes/routes").config
   , app = angular.module('app', ['ngRoute', 'ngCookies'])
-  , SiController = require("./components/signin/signinController")
+
+var SiController = require("./components/signin/signinController")
   , SuController = require("./components/signup/signupController")
+
 
 var homeController = require("./components/home/homeController").homeController
   , aboutController = require("./components/about/aboutController").aboutController
@@ -18,6 +21,8 @@ var homeController = require("./components/home/homeController").homeController
   , renewControllerStart = SiController.renewControllerStart
   , renewValidController = SiController.renewValidController
   , signupService = require("./components/signup/signupService").signupService
+
+
 
 app.config(routes)
 
