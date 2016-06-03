@@ -20,22 +20,27 @@ var express           = require('express')
   , helpers           = require("./helpers")
   , Path              = require("path")
   , Q                 = require("q")
+  , expressJwt        = require("express-jwt")
   , KEY               = require("../config/auth").key
   , ROOTCLIENT        = require("../config/main").urlRootClient // Url Client Root
   , DOMAIN            = require("../config/main").domain
 
-module.exports.getuser = function (req, res) {
+// Registration Routes / Controllers
+router.post('/', signup)
+router.get('/setadmin/:id', setAdmin)
+router.get('/authnewpass', expressJwt({secret:KEY}), authnewpass)
+router.get('/renewpassstart', renewpassstart)
+router.post('/renewpass', expressJwt({secret:KEY}), renewpass)
+router.post('/renewpasschange', expressJwt({secret:KEY}), renewpasschange)
+router.post('/validate', expressJwt({secret:KEY}), validate)
+
+
+function getuser (req, res) {
   res.json({action:" GET one user"})
 }
 
-module.exports.allusers = function (req, res) {
-  User.find({}, function (err, docs) {
-      res.json(docs)
-  })
-}
+function authnewpass(req, res) {
 
-module.exports.authnewpass = function(req, res) {
-  console.log("user ::> ", req.user);
   var hash = (!!req.user.hash ? req.user.hash : false)
 
   if (!!hash){
@@ -44,7 +49,7 @@ module.exports.authnewpass = function(req, res) {
       if (!!err) throw err
       if (!!docs) {
         user = docs[0]
-        console.log("user : ",user);
+
         // get Hash and send new token
         tokenJWT = jwt.sign({
             expiresIn : "1d"
@@ -59,7 +64,7 @@ module.exports.authnewpass = function(req, res) {
 }
 
 // Start procedure to change password
-module.exports.renewpassstart = function(req, res) {
+function renewpassstart(req, res) {
 
   var tokenJWT = jwt.sign({
       expiresIn : "1d"
@@ -73,9 +78,9 @@ module.exports.renewpassstart = function(req, res) {
 }
 
 // send an token for access to form To change password
-module.exports.renewpass = function(req, res){
-  var emailControlled,
-      verif = new validEmail
+function renewpass(req, res){
+    var emailControlled,
+          verif = new validEmail
 
   if (!!req.body.email) {
     emailControlled = verif.control(req.body.email)
@@ -134,8 +139,8 @@ module.exports.renewpass = function(req, res){
 
 }
 
-
-module.exports.renewpasschange = function(req, res) {
+// Validation to change password (verify synchro hash + update bdd)
+function renewpasschange(req, res) {
   if (!!req.body && !!req.user) {
     // 1. control data
     var mail = req.user.email
@@ -145,7 +150,6 @@ module.exports.renewpasschange = function(req, res) {
 
     if (newPass != newPassConfirm)
       res.json({"error" : "The password confirm is not same than the password. Please confirm your new password"})
-
 
     User.find(
       {hash : h}
@@ -170,12 +174,10 @@ module.exports.renewpasschange = function(req, res) {
                 if(!!err) throw(err)
 
                 if(!!stats.ok) {
-
                   // Send email : To inform the user that his password has been changed
                   sendValidRenewPwd(user.email).then(sendOk, errorHandler)
 
                   function sendOk() {
-
                     // TODO : remove hash of account for more secure process
 
                     res.json({"valid" : 1})
@@ -199,19 +201,10 @@ module.exports.renewpasschange = function(req, res) {
 
   }
 }
-// Service method
-module.exports.verifyEmail = function(req, res, email){
-  if (!!req.body && !!req.body.email) {
-    email = req.body.email
-    User.find({"email" : email}, function (err, docs, resultTest) {
-        resultTest = !!docs.length
-        res.json(resultTest)
-    })
-  }
-}
 
-module.exports.validate = function(req, res) {
-  console.log("validate : ", req.user);
+
+function validate(req, res) {
+
   if (!!req.user) {
     var hash = req.user.hash
     var mail = req.user.email
@@ -220,7 +213,6 @@ module.exports.validate = function(req, res) {
     User.find({email:mail}, function (err, docs, user) {
       if (!!docs.length) {
           user = docs[0]
-          console.log("user finded ",user)
 
         if (user.hash == hash && !user.active) {
           User.update({"hash":hash}, {"active" : true}, function(){
@@ -238,15 +230,13 @@ module.exports.validate = function(req, res) {
   }
 }
 
-///////////////////////////////////////////////
-///////////  SET ADMIN [GET _id]  ////////////
-///////////////////////////////////////////////
-module.exports.setAdmin = function(req, res) {
+/////////////////////////////////////////////////////////
+///////////  SET ADMIN [GET _id]  ///////////
+/////////////////////////////////////////////////////////
+function setAdmin(req, res) {
 
   if(!req.params.id)
     res.sendStatus(401)
-
-
 
   console.log("set this _id : ", req.params.id);
 
@@ -264,7 +254,7 @@ module.exports.setAdmin = function(req, res) {
 }
 ///////////////////////////////////////////////
 
-module.exports.user = function(req, res) {
+function signup(req, res) {
   var newHash = Hash.generate()
   var verif = new validEmail
   var emailValid = verif.control(req.body.email)
@@ -302,43 +292,17 @@ module.exports.user = function(req, res) {
     }
     , KEY)
 
-
     sendActivation(emailValid, tokenJWT).then(onsuccess, onerror)
 
+    function onerror(err){
+    console.log("err : ",err);
+    }
 
-      //
-      // emailModel = {
-      //   template : {
-      //       name : "email_activate"
-      //     , content : {
-      //         header_text : "Welcome !"
-      //     //, footer_text : "Custom Footer"
-      //       , body : {
-      //           title : "You must active your account for continue !"
-      //         , text : "For activate your account, you must just click on the next button."
-      //         , button : {
-      //             link : [ROOTCLIENT, "validateAccount/" ,tokenJWT].join("")
-      //           , text : "Activer votre compte"
-      //         }
-      //       }
-      //     }
-      //   }
-      //   , send : {
-      //       from: configEmail.sender
-      //     , to: emailValid
-      //     , subject: '[IMPORTANT] - Activate your registration and continue on our website, welcome !',
-      //   }
-      // }
-      //
-      // helpers.sendEmail(emailModel).then(onsuccess, onerror)
-
-      function onerror(err){
-        console.log("err : ",err);
-      }
-
-      function onsuccess(){
-        res.json({msg : "Your account has been created"})
-      }
+    function onsuccess(){
+    res.json({msg : "Your account has been created"})
+    }
 
   })
 }
+
+module.exports = router

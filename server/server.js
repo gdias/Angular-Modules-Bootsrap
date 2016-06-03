@@ -4,8 +4,8 @@ process.env.NODE_ENV = "development" // "production"
 
 // ========== Require dependencies
 
-var express      = require('express')
-  , exphbs       = require('express-handlebars')
+var express         = require('express')
+  , exphbs            = require('express-handlebars')
   , app          = express()
   , cookieParser = require('cookie-parser')
   , bodyParser   = require('body-parser')
@@ -29,7 +29,6 @@ module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
   // configure Express
   app.use(morgan('dev'))
   app.use(cookieParser())
-  // app.use(bodyParser())
   app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
   //app.use(i18n.init)
   app.use(bodyParser.json())
@@ -47,11 +46,11 @@ module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
   ]
 
   if (devMode)
-    APIPathRoute = [/^\/api\/.*/]
+    APIPathRoute = [/^\/api/ , /^\/api\/.*/]
 
   // API secured
   app.use(expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
-  app.use('/api',require('./routes'))
+  app.use("/api", require('./routes'))
 
   // ========== Start Server
   app.listen(port)

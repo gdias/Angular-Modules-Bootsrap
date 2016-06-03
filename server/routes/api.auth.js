@@ -12,7 +12,13 @@ var express           = require('express')
   , sendActivation    = require("../emails/auth").sendAccountActivationEmail
 
 
-module.exports.auth = function(req, res) {
+router.post('/', auth)
+router.get('/', expressJwt({secret:KEY}), authValid)
+router.post('/rae', expressJwt({secret:KEY}), resendActivateEmail)
+
+
+
+function auth (req, res) {
 
   var em = req.body.email
   var pw = req.body.pwd
@@ -55,7 +61,7 @@ module.exports.auth = function(req, res) {
   })
 }
 
-module.exports.resendActivateEmail = function(req, res) {
+function resendActivateEmail (req, res) {
 
   if (!req.user || !req.user.hash || !req.user.email)
     errorHandler()
@@ -80,9 +86,16 @@ module.exports.resendActivateEmail = function(req, res) {
 
 }
 
+function authValid(req, res) {
+    console.log("/get USER with param>",req.user)
 
-module.exports.authValid = function (req, res) {
-    console.log("/get >",req.body)
+    // TODO : control data
+    // if not good data
+    // remove auth and redirect by angular at Home
+
 
     res.sendStatus(200)
 }
+
+
+module.exports = router
