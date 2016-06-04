@@ -34,6 +34,7 @@ router.post('/renewpass', expressJwt({secret:KEY}), renewpass)
 router.post('/renewpasschange', expressJwt({secret:KEY}), renewpasschange)
 router.post('/validate', expressJwt({secret:KEY}), validate)
 
+module.exports = router
 
 function getuser (req, res) {
   res.json({action:" GET one user"})
@@ -304,5 +305,3 @@ function signup(req, res) {
 
   })
 }
-
-module.exports = router

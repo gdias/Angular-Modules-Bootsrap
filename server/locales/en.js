@@ -1,16 +1,11 @@
-"use strict"
-
-
 {
   "website" : {
     "commons" : {
       "header" : {
         "menu" : {
-          "items" : {
-              "home" : "Home"
-            , "about" : "About"
-            , "contact" : "Contact"
-          }
+          "home" : "Home"
+        , "about" : "About"
+        , "contact" : "Contact"
         }
       }
       , "footer" : {
@@ -35,6 +30,9 @@
   }
   , "email" : {
     "validateEmail" : {
+      "title" : ""
+    }
+    , "forgotEmail" : {
       "title" : ""
     }
   }

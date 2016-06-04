@@ -29,6 +29,10 @@ module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
   // configure Express
   app.use(morgan('dev'))
   app.use(cookieParser())
+
+  // app.use(bodyParser())
+  i18n.configure(configI18n)
+
   app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
   //app.use(i18n.init)
   app.use(bodyParser.json())
@@ -51,6 +55,7 @@ module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
   // API secured
   app.use(expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
   app.use("/api", require('./routes'))
+
 
   // ========== Start Server
   app.listen(port)

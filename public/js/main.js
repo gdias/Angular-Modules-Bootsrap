@@ -1,11 +1,14 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('angular')
+
 var ngRoute = require('angular-route')
   , ngCookies = require('angular-cookies')
-  , routes = require("./routes/routes").routes
+  , routes = require("./routes/routes").config
   , app = angular.module('app', ['ngRoute', 'ngCookies'])
-  , SiController = require("./components/signin/signinController")
+
+var SiController = require("./components/signin/signinController")
   , SuController = require("./components/signup/signupController")
+
 
 var homeController = require("./components/home/homeController").homeController
   , aboutController = require("./components/about/aboutController").aboutController
@@ -19,6 +22,8 @@ var homeController = require("./components/home/homeController").homeController
   , renewControllerStart = SiController.renewControllerStart
   , renewValidController = SiController.renewValidController
   , signupService = require("./components/signup/signupService").signupService
+
+
 
 app.config(routes)
 
@@ -86,7 +91,7 @@ module.exports.homeController = ['$scope', '$http', function homeController ($sc
 
 var validEmail = require('../../../server/utils').validEmail
   , jwt = require("jsonwebtoken")
-  , $ = angular.element
+  , Each = angular.forEach
 
 
 module.exports.renewControllerStart = ['$scope', '$http', '$window',
@@ -171,11 +176,12 @@ module.exports.renewController = ['$scope', '$http', '$window', '$cookies', '$lo
 ]
 
 
-module.exports.renewValidController = ['$scope', '$http', '$routeParams', '$document',
-  function renewValidController($scope, $http, $routeParams, $document, token, passwordsInput) {
+module.exports.renewValidController = ['$scope', '$http', '$window', '$routeParams', '$document',
+  function renewValidController($scope, $http, $window, $routeParams, $document, token, passwordsInput) {
 
     if (!!$routeParams.token){
       token = $routeParams.token
+
       $scope.form = {}
       $http({method: 'GET', url: '/api/user/authnewpass', headers: {
           'Authorization': ['Bearer ',token].join("")}
@@ -183,7 +189,7 @@ module.exports.renewValidController = ['$scope', '$http', '$routeParams', '$docu
 
       function authOk(response) {
         $scope.form.show = true
-        $scope.form.token = response
+        $scope.form.token = response.data.token
         console.log("show the form");
       }
 
@@ -192,40 +198,57 @@ module.exports.renewValidController = ['$scope', '$http', '$routeParams', '$docu
         console.error("Auth for change password has failed")
       }
 
-      passwordsInput = $document.find("input[type=password]")
+      passwordsInput = $document.find("input")
 
       $scope.showPass = function(e) {
         e.preventDefault();
 
         (function switchType() {
-          console.log("passwordsInput :: ", passwordsInput);
-          passwordsInput.each(function(){
-            console.log(arguments)
-
+          Each(passwordsInput, function(v, k, type){
+            type = v.getAttribute("type")
+            if (type === "password")
+              v.setAttribute("type", "text")
+              else if (type === "text")
+                v.setAttribute("type", "password")
           })
         })()
 
       }
 
-      $scope.sendFormNewPass = function() {
+      $scope.sendFormNewPass = function(token) {
 
         if (!$scope.form.token)
           return false
 
-        var token = $scope.form.token
+        // TODO : call services for control data before send to server
 
+        token = $scope.form.token
 
         $http({
             method: 'POST'
-            , url: '/api/user/renewpass'
+            , url: '/api/user/renewpasschange'
             , data: {
-                email : $scope.form.mail
-              , step : 1
+                pwd : $scope.form.pass
+              , vpwd: $scope.form.passconfirm
+              , step : 2
             }
             , headers: {
               'Authorization': ['Bearer ',token].join("")
             }
-        })
+        }).then(
+          function(response){
+            // Redirect for display
+            if (!response.data.error)
+              $window.location.href = "/#/renewPassword/validChangeOk"
+            else
+              $scope.form.err.msg = response.data.error, $scope.error = true
+
+          },
+          function (err) {
+            if (!!err)
+              $scope.error = true
+          }
+        )
 
       }
 
@@ -246,6 +269,7 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
   $scope.form = {}
   $scope.form.persist = true
   $scope.activationMailStatus = false
+
   function authOk(){
     // get a localStorage with token
     $rootScope.auth = true
@@ -281,15 +305,17 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
 
             $scope.resendActivateEmail = function(e) {
               e.preventDefault()
-              // send request with token
-              //console.log("token : ",t);
 
+              // remove link
+              e.srcElement.parentNode.removeChild(e.srcElement)
+
+              // send request with token
               $http({method: 'POST', url: '/api/auth/rae', headers: {
                   'Authorization': ['Bearer ',t].join("")}
               }).then(arOK, arNOK)
 
               function arOK(){
-                console.log("Resend RAE OK");
+                $scope.form.validresend = "The activation email was sent"
               }
 
               function arNOK(){
@@ -300,6 +326,7 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
 
             $scope.activateLinkText = "Resend Activation Email"
           }
+
           $scope.error = response.data.error
       }
     })
@@ -315,15 +342,32 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
 var jwt = require("jsonwebtoken")
 //var i18n = require("i18n")
 
-module.exports.signupController = ['$scope', '$http', 'signupService',
-function signupController ($scope, $http, signupService){
+module.exports.signupController = ['$scope', '$http', 'signupService', '$window',
+function signupController ($scope, $http, signupService, $window){
   $scope.message = "Inscription"
   $scope.form = {}
   $scope.debug = true
   $scope.form.exist = false
+  $scope.form.validPass = false
+
+  $scope.$watch('form.validPwdSize', function() {
+      console.log('validPwdSize has changed!');
+  });
+
+  $scope.$watch('form.validPwdNum', function() {
+      console.log('validPwdNum has changed!');
+  });
+
+
+  $scope.focusPassValid = function() {
+    $scope.form.validPass = true
+  }
+
+  $scope.blurPassValid = function() {
+    $scope.form.validPass = false
+  }
 
   $scope.checkEmailFormat = function(){
-
       $scope.form.validEmailFormat = false
       console.log($scope.form.email," - args",arguments, $scope.form.emailvalid)
   }
@@ -347,17 +391,36 @@ function signupController ($scope, $http, signupService){
 
 
   $scope.signUpUser = function(){
+    console.log($scope.form);
 
-    $http.post("/api/user", $scope.form).then(function(response, validateUrl){
+    if (!!$scope.form.validPwdSize &&
+        !!$scope.form.validPwdConfirm &&
+        !!$scope.form.emailvalid &&
+        !!$scope.form.validPwdNum) {
 
-      if (!!response.data.token)
-        validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
+      $http.post("/api/user", $scope.form).then(function(response, validateUrl){
 
-      console.log("use this url for validate your new account : ", validateUrl);
-    }, function(err){
-      console.log(err);
-    })
+        console.log("data : ", response.data);
 
+        if (!!response.data)
+          // validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
+
+        // Change view and show message for to have send an email of confirmation
+        $window.location.href = "/signup/valid"
+
+
+      }, function(err){
+        console.log(err);
+      })
+    } else {
+
+        if (!$scope.form.validPwdSize)
+          $scope.form.error = "The password that you have choose, is not enough long. The security required minimum 6 characters."
+        else if (!$scope.form.validPwdNum)
+          $scope.form.error = "Your password have not an numerical characters. The security required minimum 1 number."
+        else if (!$scope.form.validPwdConfirm)
+          $scope.form.error = "The password are not same. Please confirm your password before continue."
+    }
   }
 
 }]
@@ -441,7 +504,6 @@ module.exports.signupService = ["$http", "$q",
     }
 
     function checkPwdSize(pwd, min, max) {
-      debugger
       min = 6
       max = 50
       return !!pwd ? pwd.length > min  && pwd.length < max ? true : false : false
@@ -556,12 +618,13 @@ var checkLoggedin = function($q, $timeout, $http, $location, $rootScope, $cookie
 }
 
 
-module.exports.routes = [
-    '$routeProvider'
-  , function($routeProvider) {
+module.exports.config = [
+    '$routeProvider', '$locationProvider'
+  , function($routeProvider, $locationProvider) {
+
     // Router
     $routeProvider
-    .when('/home', {
+    .when('/', {
           templateUrl: 'partials/home.html'
         , controller: 'homeController'
     })
@@ -580,6 +643,9 @@ module.exports.routes = [
     .when('/signup', {
           templateUrl: 'partials/auth/signup.html'
         , controller: 'signupController'
+    })
+    .when('/signup/valid', {
+          templateUrl: 'partials/auth/signup_valid.html'
     })
     .when('/validateAccount/:token', {
           templateUrl: 'partials/auth/validateAccount.html'
@@ -602,7 +668,9 @@ module.exports.routes = [
           templateUrl: 'partials/auth/renew_valid.html'
         , controller: 'renewValidController'
     })
-
+    .when('/renewPassword/validChangeOk', {
+        templateUrl : 'partials/auth/renew_validOk.html'
+    })
     .when('/account', {
           templateUrl: 'partials/secure/account.html'
         , controller: 'accountController'
@@ -611,8 +679,16 @@ module.exports.routes = [
           }
     })
     .otherwise({
-        redirectTo: '/home'
+        redirectTo: '/'
     })
+
+    // Remove Hash on routes
+    $locationProvider.html5Mode({
+        enabed : true
+      , requireBase: false
+    })
+
+
   }
 ]
 
@@ -631,11 +707,13 @@ module.exports.menuController = ['$scope', '$http', '$rootScope', function menuC
   $rootScope.$on('updateMenuEvent', function (event, data) {
     console.log("emit event for menu ", $rootScope.auth);
 
-    if ($rootScope.auth)
+    if ($rootScope.auth) {
+      console.log("template :: ",$scope.template);
       $scope.template = {
           name : "account"
         , url : "'partials/commons/menuAccount.html'"
       }
+    }
   })
 
 }]
