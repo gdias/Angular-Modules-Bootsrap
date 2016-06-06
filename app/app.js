@@ -2,6 +2,7 @@ require('angular')
 
 var ngRoute = require('angular-route')
   , ngCookies = require('angular-cookies')
+  , translate = require('angular-translate')
   , routes = require("./routes/routes").config
   , app = angular.module('app', ['ngRoute', 'ngCookies'])
 
@@ -21,7 +22,7 @@ var homeController = require("./components/home/homeController").homeController
   , renewControllerStart = SiController.renewControllerStart
   , renewValidController = SiController.renewValidController
   , signupService = require("./components/signup/signupService").signupService
-
+  , emailEditController = require("./components/account/emailEditController").emailEditController
 
 
 app.config(routes)
@@ -39,5 +40,6 @@ app.controller('renewControllerStart', renewControllerStart)
 app.controller('renewValidController', renewValidController)
 
 app.controller('accountController', accountController)
+app.controller('emailEditController', emailEditController)
 
 app.service('signupService', signupService)

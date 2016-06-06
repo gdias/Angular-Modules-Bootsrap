@@ -1,47 +1,35 @@
 "use strict"
 
 var routes = require("./base")
-
+var checkAuth = require("./helpers").checkAuth
 
 module.exports.accountRoutes = (function() {
 
-  // Sign in
+  // Account
   routes.add("/account", {
       templateUrl: 'partials/secure/account.html'
     , controller: 'accountController'
     , resolve: {
-        loggedin: checkLoggedin
-      }
+        loggedin : checkAuth
+    }
   })
 
-  function checkLoggedin ($q, $timeout, $http, $location, $rootScope, $cookies, dfd, token) {
+  // Home account edit
+  routes.add("/account/edit", {
+      templateUrl: 'partials/secure/edit.html'
+    , resolve: {
+        loggedin : checkAuth
+    }
+  })
 
-    dfd = $q.defer()
-    token = $cookies.get("jwt-token") || window.localStorage.getItem('token')
-
-    $http({
-      method: 'GET'
-      , url: '/api/auth'
-      , headers: {
-        'Authorization': ['Bearer ', token].join("")
-      }
-    }).success(function(user){
-      if (user !== '0'){
-        $rootScope.auth = true
-        dfd.resolve()
-      } else { // Not Authenticated
-        $rootScope.auth = false
-        $rootScope.message = 'You need to log in.'
-        dfd.reject()
-        $location.url('/signin')
-      }
-    }).error(function(err){
-      $rootScope.auth = false
-      $location.url('/signin')
-    })
-
-    return dfd.promise
-  }
+  // Email edit
+  routes.add("/account/edit/email", {
+      templateUrl: 'partials/secure/edit.email.html'
+    , controller: 'emailEditController'
+    , resolve: {
+        loggedin : checkAuth
+    }
+  })
 
   return routes
 

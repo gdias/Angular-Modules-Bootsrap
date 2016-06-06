@@ -6,10 +6,9 @@ module.exports.accountController = ['$scope', '$http', '$rootScope', function si
   $rootScope.$emit('updateMenuEvent')
 
 
-
   //console.log("rscope : ", $rootScope);
   //$rootScope.menuAccount()
 
-  console.log("rootScope.auth : ", (!!$rootScope.auth ? "OK" : "NOK"))
+//  console.log("rootScope.auth : ", $rootScope.auth )
 
 }]

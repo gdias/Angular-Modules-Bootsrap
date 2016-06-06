@@ -22,5 +22,8 @@ module.exports.config = [
         redirectTo: '/'
     })
 
+    $locationProvider.html5Mode(true)
+
+    //$translateProvider.preferredLanguage('en-US')
   }
 ]

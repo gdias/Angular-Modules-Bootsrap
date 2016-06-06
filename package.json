@@ -41,15 +41,16 @@
     "q": "^1.4.1"
   },
   "devDependencies": {
+    "angular-translate": "^2.11.0",
     "browser-sync": "^2.9.11",
     "browserify": "~12.0",
     "connect-livereload": "^0.5.4",
     "gulp": "~3.9",
     "gulp-angular-protractor": "^0.1.1",
+    "gulp-clean-css": "*",
     "gulp-connect": "latest",
     "gulp-imagemin": "^2.3.0",
     "gulp-livereload": "^3.8.1",
-    "gulp-clean-css": "*",
     "gulp-nodemon": "^2.0.6",
     "gulp-notify": "^2.2.0",
     "gulp-plumber": "^1.0.1",
