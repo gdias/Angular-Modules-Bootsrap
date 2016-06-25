@@ -48,10 +48,10 @@ For the tests E2E with Protractor, make sure you have Java installed and last ve
 
 
 ##Usage
+https://localhost:4443
 
 #### Start local server on secure port 4443
 > gulp
-> https://localhost:4443
 
 #### Start production compression
 > gulp prod
