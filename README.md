@@ -10,6 +10,7 @@ I wish that this AngularJS bootstrap is oriented on modules of browserify, not t
 
 Into this bootstrap you will find :
 ##### ServerSide
+* Server secured (SSL)
 * Api server with JWT Auth routes [Express]
 * Email templates helpers [Handlebars]
 * Database with Mongoose [MongoDB]
@@ -17,11 +18,14 @@ Into this bootstrap you will find :
 ##### ClientSide
 * Development Server with Watcher, Compiler and Notifications [Gulp]
 * Sass styles Builder [SCSS]
+* Angular & Bootstrap
+* Units & E2e tests
 
 ## Features
 - Node 6 Ready
+- HTTPS
 - Angular 1.5
-- Server API ExpressJS 4
+- API ExpressJS 4
 - Database MongoDB
 - Json Web Token Authentication
 - Module pattern Browserify
@@ -29,7 +33,7 @@ Into this bootstrap you will find :
 - Use uglify for validate and compress JS code
 - Sass builder (node-sass) and minifying
 
-## Bootstrap
+## Boilerplate
 - Basic routes Client (Home, About, Contact)
 - Auth module with steps, sign-in, sign-out, forgot password and resend activation email
 - API REST protected by JsonWebToken for authentication part
@@ -45,8 +49,9 @@ For the tests E2E with Protractor, make sure you have Java installed and last ve
 
 ##Usage
 
-#### Start local server on port 8080
+#### Start local server on secure port 4443
 > gulp
+> https://localhost:4443
 
 #### Start production compression
 > gulp prod
@@ -59,3 +64,8 @@ For the tests E2E with Protractor, make sure you have Java installed and last ve
 - E2e & Units tests
 - Account editor
 - Admin manager
+
+## Note
+HTTPS : An temporary certificate is available into project, but it's only for development. Change or buy one for your security.
+
+Enjoy !

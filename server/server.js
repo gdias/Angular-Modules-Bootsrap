@@ -4,9 +4,12 @@ process.env.NODE_ENV = "development" // "production"
 
 // ========== Require dependencies
 
-var express         = require('express')
-  , exphbs            = require('express-handlebars')
+var express      = require('express')
+  , https        = require("https")
+  , fs           = require("fs")
+  , exphbs       = require('express-handlebars')
   , app          = express()
+  , Static       = express()
   , cookieParser = require('cookie-parser')
   , bodyParser   = require('body-parser')
   , morgan       = require("morgan")
@@ -15,16 +18,19 @@ var express         = require('express')
   , session      = require('express-session')
   , expressJWT   = require("express-jwt")
   , jwt          = require("jsonwebtoken")
+  , path         = require('path')
   , devMode      = (app.get('env') === "development" ? true : false)
 
 
-module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
+module.exports = function(rootpath, port, api_port, secure_port, secure_api_port, welcome, welcomeAPI, db, parent, APIPathRoute) {
 
 // ========== Configuration Server & connect to MongoDB
-  welcome = ["The Express Server is started on ",port," port"].join("")
-  parent = __dirname.substring(0, __dirname.lastIndexOf("/"))
-  path = [parent, "/public"].join("")
+  rootpath = path.resolve("./public")
   port = 8080
+  secure_port = 4443
+
+  welcome = ["The APP is hosted on : ",port," port"].join("")
+  welcomeAPI = ["The API is started on : ",api_port," port"].join("")
 
   // configure Express
   app.use(morgan('dev'))
@@ -38,7 +44,7 @@ module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
   app.use(bodyParser.json())
 
   // statics file (SPA)
-  app.use(express.static(path))
+  app.use(express.static(rootpath))
 
   // Auth routes api
   APIPathRoute = [
@@ -53,13 +59,22 @@ module.exports = function(path, port, welcome, db, parent, APIPathRoute) {
     APIPathRoute = [/^\/api/ , /^\/api\/.*/]
 
   // API secured
-  app.use(expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
+  app.all("/api", expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
+  //app.use(expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
   app.use("/api", require('./routes'))
 
+  app.get('*', function (req, res) {
+    var p = [rootpath, '/' ,'index.html'].join("")
+    res.sendFile(p)
+  })
 
-  // ========== Start Server
-  app.listen(port)
+  // ========== Create & Start Https Server
+  https.createServer({
+    key: fs.readFileSync(path.resolve('./config/key.pem')),
+    cert: fs.readFileSync(path.resolve('./config/cert.pem'))
+  }, app).listen(secure_port)
 
   console.log(welcome)
+
 
 }
