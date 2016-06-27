@@ -4,7 +4,7 @@ var routes = require("./base")
 var checkAuth = require("./helpers").checkAuth
 
 module.exports.accountRoutes = (function() {
-
+ 
   // Account
   routes.add("/account", {
       templateUrl: 'partials/secure/account.html'
@@ -17,6 +17,7 @@ module.exports.accountRoutes = (function() {
   // Home account edit
   routes.add("/account/edit", {
       templateUrl: 'partials/secure/edit.html'
+    , controller: 'editController'
     , resolve: {
         loggedin : checkAuth
     }
@@ -31,6 +32,23 @@ module.exports.accountRoutes = (function() {
     }
   })
 
+  // Email edit
+  routes.add("/account/edit/email/valid", {
+      templateUrl: 'partials/secure/edit.email.html'
+    , controller: 'emailEditController'
+    , resolve: {
+        loggedin : checkAuth
+    }
+  })
+
+  // Email edit
+  routes.add("/account/edit/email/valid/:token", {
+      templateUrl: 'partials/secure/edit.email.valid.html'
+    , controller: 'emailEditValidController'
+    , resolve: {
+        loggedin : checkAuth
+    }
+  })
   return routes
 
 })()

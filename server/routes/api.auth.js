@@ -35,6 +35,7 @@ function auth (req, res) {
 
             tokenJWT = jwt.sign({
                 expiresIn : "7d"
+              , id : docs[0]._id
               , username : req.body.email
             }, KEY)
 

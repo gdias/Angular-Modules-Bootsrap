@@ -9,7 +9,6 @@ var ngRoute = require('angular-route')
 var SiController = require("./components/signin/signinController")
   , SuController = require("./components/signup/signupController")
 
-
 var homeController = require("./components/home/homeController").homeController
   , aboutController = require("./components/about/aboutController").aboutController
   , contactController = require("./components/contact/contactController").contactController
@@ -22,8 +21,15 @@ var homeController = require("./components/home/homeController").homeController
   , renewControllerStart = SiController.renewControllerStart
   , renewValidController = SiController.renewValidController
   , signupService = require("./components/signup/signupService").signupService
-  , emailEditController = require("./components/account/emailEditController").emailEditController
+  , emailEditController = require("./components/account/edit/emailEditController").emailEditController
+  , emailEditValidController = require("./components/account/edit/emailEditController").emailEditValidController
+  , emailEditService = require("./components/account/edit/emailEditService").emailEditService
+  , accountService = require("./components/account/accountService").accountService
 
+  , editController = require("./components/account/edit/editController").editController
+  , editService = require("./components/account/edit/editService").editService
+
+  , sandboxController = require("./components/sandbox/sandboxController").sandboxController
 
 app.config(routes)
 
@@ -41,5 +47,13 @@ app.controller('renewValidController', renewValidController)
 
 app.controller('accountController', accountController)
 app.controller('emailEditController', emailEditController)
+app.controller('emailEditValidController', emailEditValidController)
+
+app.controller('editController', editController)
+
+app.controller('sandboxController', sandboxController)
 
 app.service('signupService', signupService)
+app.service('emailEditService', emailEditService)
+app.service('accountService', accountService)
+app.service('editService', editService)

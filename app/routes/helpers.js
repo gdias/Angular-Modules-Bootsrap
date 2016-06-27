@@ -3,8 +3,16 @@
 module.exports.checkAuth = ["$q", "$timeout", "$http", "$location", "$rootScope", "$cookies",
 function ($q, $timeout, $http, $location, $rootScope, $cookies, dfd, token) {
 
+//  console.log("checkAuth");
+
   dfd = $q.defer()
   token = $cookies.get("jwt-token") || window.localStorage.getItem('token')
+
+  if (!token)
+    dfd.reject()
+
+  if (!$cookies.get("jwt-token") && !!token)
+    $cookies.put("jwt-token", token)
 
   $http({
     method: 'GET'
@@ -26,6 +34,7 @@ function ($q, $timeout, $http, $location, $rootScope, $cookies, dfd, token) {
 
   }).error(function(err){
     $rootScope.auth = false
+    dfd.reject()
     $location.url('/signin')
   })
 

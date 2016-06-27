@@ -1,13 +1,12 @@
 "use strict"
 
 var express           = require('express')
+  , expressJwt        = require("express-jwt")
+  , jwt               = require("jsonwebtoken")
   , User              = require("../models/user")
   , db                = require("../database").db
-  , jwt               = require("jsonwebtoken")
   , Hash              = require('../utils').hash
   , router            = express.Router()
-  , nodemailer        = require('nodemailer')
-  , smtpTransport     = require('nodemailer-smtp-transport')
   , validEmail        = require('../utils').validEmail
   , moment            = require('moment')
   , handlebars        = require('handlebars')
@@ -20,7 +19,6 @@ var express           = require('express')
   , helpers           = require("./helpers")
   , Path              = require("path")
   , Q                 = require("q")
-  , expressJwt        = require("express-jwt")
   , KEY               = require("../config/auth").key
   , ROOTCLIENT        = require("../config/main").urlRootClient // Url Client Root
   , DOMAIN            = require("../config/main").domain
@@ -30,6 +28,7 @@ router.post('/', signup)
 router.get('/setadmin/:id', setAdmin)
 router.get('/authnewpass', expressJwt({secret:KEY}), authnewpass)
 router.get('/renewpassstart', renewpassstart)
+router.get('/', expressJwt({secret:KEY}), getuser)
 router.post('/renewpass', expressJwt({secret:KEY}), renewpass)
 router.post('/renewpasschange', expressJwt({secret:KEY}), renewpasschange)
 router.post('/validate', expressJwt({secret:KEY}), validate)
@@ -37,7 +36,23 @@ router.post('/validate', expressJwt({secret:KEY}), validate)
 module.exports = router
 
 function getuser (req, res) {
-  res.json({action:" GET one user"})
+
+  if (!!req.user.id)
+    User.find({'_id':req.user.id}, function(err, docs){
+      if (!!err) throw err
+      if (!!docs) {
+          res.json({
+              email:docs[0].email
+            , username : docs[0].username
+            , startDate : docs[0].startDate
+            , level : docs[0].level
+            , active : docs[0].active
+          })
+      }
+    })
+  else
+    res.sendStatus(500)
+
 }
 
 function authnewpass(req, res) {
@@ -273,6 +288,7 @@ function signup(req, res) {
     , startDate : moment().format()
     , active : 'false'
     , level : '1'
+    , ip : req.connection.remoteAddress
   }
 
   // if (sessionStorage.getItem('isAdmin'))
@@ -296,7 +312,7 @@ function signup(req, res) {
     sendActivation(emailValid, tokenJWT).then(onsuccess, onerror)
 
     function onerror(err){
-    console.log("err : ",err);
+      console.log("err : ",err);
     }
 
     function onsuccess(){

@@ -26,7 +26,7 @@ module.exports = function(rootpath, port, api_port, secure_port, secure_api_port
 
 // ========== Configuration Server & connect to MongoDB
   rootpath = path.resolve("./public")
-  port = 8080
+
   secure_port = 4443
 
   welcome = ["The APP is hosted on : ",port," port"].join("")
@@ -53,14 +53,14 @@ module.exports = function(rootpath, port, api_port, secure_port, secure_api_port
     , /^\/api\/user\/.*/
     , /^\/api\/users/
     , /^\/api\/verify\/email/
+    , /^\/api\/verify\/email\/different/
   ]
 
   if (devMode)
-    APIPathRoute = [/^\/api/ , /^\/api\/.*/]
+    APIPathRoute = [/^\/api/ , /^\/api\/.*/, /^\/api\/.*\/.*/]
 
   // API secured
   app.all("/api", expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
-  //app.use(expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
   app.use("/api", require('./routes'))
 
   app.get('*', function (req, res) {

@@ -20,5 +20,10 @@ module.exports.navRoutes = (function() {
       , controller: 'contactController'
   })
 
+  routes.add("/sandbox", {
+        templateUrl : "partials/sandbox.html"
+      , controller : "sandboxController"
+  })
+
   return routes
 })()

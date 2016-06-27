@@ -1,8 +1,18 @@
 <div>
-  You have need to update your account informations, you are in place !
+  <h2>Edit your informations</h2>
+  <div>
+    You have need to update your account informations, you're in the best place !
+  </div>
+  <div>
+    <ul>
+      <li>Username : {{usernameProfile}} | <a href="#" ng-click="editUsername($event)">edit</a></li>
+      <li>Email contact : {{emailProfile}}</li>
+      <li>Created date : {{startProfile}}</li>
+    </ul>
+  </div>
+  <ul>
+    <li><a href="account/edit/email">Change your email</a></li>
+    <li><a href="account/edit/password">Change your password</a></li>
+    <li><a href="account/delete">Delete your account</a></li>
+  </ul>
 </div>
-<ul>
-  <li><a href="account/edit/email">Change your email</a></li>
-  <li><a href="account/edit/password">Change your password</a></li>
-  <li><a href="account/delete">Delete your account</a></li>
-</ul>

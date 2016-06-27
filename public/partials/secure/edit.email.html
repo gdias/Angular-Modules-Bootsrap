@@ -1,15 +1,23 @@
 <div>
   <h2>Change your email</h2>
   <p>
-    To change your email, will do in 2 steps. First, enter your new email. <br>
-    You will receive an email at this new adress. Click on validation link contain it
+    Change your email will do in 2 steps. First, enter your new email.
+
   </p>
   <div>
     <form id="editEmail" ng-submit="sendNewEmail()">
       <div>
-        <input type="text" ng-model="newemail" placeholder="Enter your new email"/>
+        <input type="email" ng-model="newemail" placeholder="Enter your new email" required ng-show="sendButtonShow" />
       &nbsp;
-        <input type="submit" value="Change" />
+        <input type="submit" value="Change" ng-show="sendButtonShow"/>
+      </div>
+      <div ng-show="validShow">
+        Your demand has been accepted. <br>
+        An email has been sended at ({{newemail}}). <br>
+        You must click on validation link contain it for continue.
+      </div>
+      <div ng-show="errShow">
+        {{errMsg}}
       </div>
     </form>
   </div>

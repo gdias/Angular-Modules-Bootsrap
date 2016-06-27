@@ -14,6 +14,7 @@ UserShema = new Schema({
     , active : Boolean
     , level : Number
     , hash : String
+    , ip : String
 })
 
 module.exports = mongoose.model('User', UserShema)

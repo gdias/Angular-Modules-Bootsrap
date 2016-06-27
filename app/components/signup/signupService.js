@@ -96,7 +96,7 @@ module.exports.signupService = ["$http", "$q",
     }
 
     return {
-    checkIfEmailExist : emailExist//
+        checkIfEmailExist : emailExist//
       , checkPwdSize : checkPwdSize
       , checkPwdNum : checkPwdNum
       , checkEmailFormat : emailFormat
