@@ -20,6 +20,7 @@ var express      = require('express')
   , jwt          = require("jsonwebtoken")
   , path         = require('path')
   , devMode      = (app.get('env') === "development" ? true : false)
+  , KEY          = require("./config/auth").key
 
 
 module.exports = function(rootpath, port, api_port, secure_port, secure_api_port, welcome, welcomeAPI, db, parent, APIPathRoute) {
@@ -50,18 +51,17 @@ module.exports = function(rootpath, port, api_port, secure_port, secure_api_port
   APIPathRoute = [
       /^\/api\/auth/
     , /^\/api\/user\/setadmin\/.*/
-    , /^\/api\/user\/.*/
-    , /^\/api\/users/
     , /^\/api\/verify\/email/
     , /^\/api\/verify\/email\/different/
+    , /^\/api\/users/              // TODO : temporary
   ]
 
-  if (devMode)
-    APIPathRoute = [/^\/api/ , /^\/api\/.*/, /^\/api\/.*\/.*/]
-
+  // if (devMode)
+  //   APIPathRoute = [/^\/api/ , /^\/api\/.*/, /^\/api\/.*\/.*/]
+// .unless({path:APIPathRoute})
   // API secured
-  app.all("/api", expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
-  app.use("/api", require('./routes'))
+  //app.all("/api", expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
+  app.use("/api", expressJWT({secret:KEY}).unless({path:APIPathRoute}), require('./routes'))
 
   app.get('*', function (req, res) {
     var p = [rootpath, '/' ,'index.html'].join("")

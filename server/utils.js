@@ -77,13 +77,25 @@ module.exports.validEmail = function(email, self) {
   }
 
   self.control = function(email) {
-    if (!email || email === "" || !self.checkSize(email))
+
+    var domain = ""
+    var reg = ""
+
+    if (!email || typeof email !== "string" || !self.checkSize(email)){
       self.error("This input is not supported")
+      return false
+    }
 
     if (self.testAt(email)) {
-      var domain = self.getDomain(email)
+      domain = self.getDomain(email)
 
-      return (self.testPoint(domain) > 0 ? email : false)
+      if (!!domain && !!self.testPoint(domain))
+      {
+        reg = new RegExp("^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$","i")
+        return (!!email.match(reg) ? email : false)
+      }
+      else
+        return false
     }
     else
       return false

@@ -3,6 +3,7 @@
 var navRoutes = require('./nav.routes').navRoutes
 var authRoutes = require('./auth.routes').authRoutes
 var accountRoutes = require('./account.routes').accountRoutes
+var adminRoutes = require('./admin.routes').adminRoutes
 
 module.exports.config = [
     '$routeProvider', '$locationProvider'

@@ -51,16 +51,16 @@ module.exports.renewController = ['$scope', '$http', '$window', '$cookies', '$lo
     if (sessionStorage.getItem("renewVerif") == null)
       $window.location.href = "/"
 
-    $scope.renew = function(testEmail, token) {
-      testEmail = new validEmail
-
-      if (!!testEmail.control($scope.form.mail)) {
+    $scope.renew = function(helper, token, testEmail) {
+      helper = new validEmail
+      testEmail = helper.control($scope.form.mail)
+      if (!!testEmail) {
         token = atob(JSON.parse(sessionStorage.getItem("renewVerif")))
         $http({
             method: 'POST'
             , url: '/api/user/renewpass'
             , data: {
-                email : $scope.form.mail
+                email : testEmail
               , step : 1
             }
             , headers: {

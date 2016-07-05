@@ -9,13 +9,28 @@ var express           = require('express')
   , KEY               = require("../config/auth").key
   , bcrypt            = require('bcrypt-nodejs')
   , expressJwt        = require("express-jwt")
+  , moment            = require("moment")
+  , User              = require("../models/user")
   , sendActivation    = require("../emails/auth").sendAccountActivationEmail
 
 
-router.post('/', auth)
 router.get('/', expressJwt({secret:KEY}), authValid)
+router.get('/admin', expressJwt({secret:KEY}), adminVerif)
+router.post('/', auth)
 router.post('/rae', expressJwt({secret:KEY}), resendActivateEmail)
 
+function adminVerif(req, res) {
+
+  if (!!req.user)
+    User.find({"_id":req.user.id}, function(err, docs){
+      var level = docs[0].level
+      if(!!level)
+        res.json(level === 666 ? true : false)
+      else
+        res.sendStatus(500)
+    })
+
+}
 
 
 function auth (req, res) {
@@ -32,12 +47,16 @@ function auth (req, res) {
         if(bcrypt.compareSync(pw, passCrypted)) {
 
           if (!!docs[0].active) {
+            var userID = docs[0]._id;
 
             tokenJWT = jwt.sign({
                 expiresIn : "7d"
-              , id : docs[0]._id
+              , id : userID
               , username : req.body.email
             }, KEY)
+
+            //update lastConnection
+            User.update({'_id':userID}, {'lastConnection': moment().format()})
 
             res.json(tokenJWT)
           }

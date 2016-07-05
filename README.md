@@ -1,12 +1,12 @@
 
 ##Angular modules bootstrap
 
-I changed my way of working in front-end development, and i recently make an bootstrap for start instantly an FullJS project. You have an website idea ? Clone project from github and just code it !
+I change my way of works in front-end development, and i recently make an bootstrap for start instantly an FullJS project. You have an website idea ? Clone project from github and just code it !
 
-I wish that this AngularJS bootstrap is oriented on modules of browserify, not the Angular's modules. This approach is a nice way for create an new clientside project with CommonJS modules. Also it's a starting point for isomorphic coding.
+I wanted to that AngularJS boilerplate is oriented on modules of browserify instead of the Angular's modules. This approach is a nice way for easy to create an new clientside project with CommonJS modules.
 
 ##### Version
-> 0.1.0
+> 0.2.1
 
 Into this bootstrap you will find :
 ##### ServerSide
@@ -62,8 +62,6 @@ https://localhost:4443
 ## Roadmap
 - i18n for ML
 - E2e & Units tests
-- Account editor
-- Admin manager
 
 ## Note
 HTTPS : An temporary certificate is available into project, but it's only for development. Change or buy one for your security.

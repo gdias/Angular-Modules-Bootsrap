@@ -4,7 +4,7 @@ var express           = require('express')
   , expressJwt        = require("express-jwt")
   , jwt               = require("jsonwebtoken")
   , User              = require("../models/user")
-  , db                = require("../database").db
+  //, db                = require("../database").db
   , Hash              = require('../utils').hash
   , router            = express.Router()
   , validEmail        = require('../utils').validEmail
@@ -32,8 +32,55 @@ router.get('/', expressJwt({secret:KEY}), getuser)
 router.post('/renewpass', expressJwt({secret:KEY}), renewpass)
 router.post('/renewpasschange', expressJwt({secret:KEY}), renewpasschange)
 router.post('/validate', expressJwt({secret:KEY}), validate)
+router.get('/all', expressJwt({secret:KEY}), getAllUsers)
+router.get('/full/:id', expressJwt({secret:KEY}), getOneFull)
 
-module.exports = router
+function getOneFull(req, res) {
+  var id = req.params.id
+  if (!!id)
+      helpers.controlAdmin(req.user.id).then(successHandler, errorHandler)
+
+      function successHandler(control){
+
+        if(!!control)
+          User.find({'_id':id}, function (err, docs) {
+              res.json(docs)
+          })
+        else
+          res.sendStatus(401)
+
+      }
+
+      function errorHandler(err){
+        console.log(err)
+        res.sendStatus(401)
+      }
+}
+
+
+function getAllUsers(req, res) {
+
+  if(!!req.user.id)
+    helpers.controlAdmin(req.user.id).then(successHandler, errorHandler)
+
+    function successHandler(control){
+
+      if(!!control)
+        User.find({}, function (err, docs) {
+            res.json(docs)
+        })
+      else
+        res.sendStatus(401)
+
+    }
+
+    function errorHandler(err){
+      console.log(err)
+      res.sendStatus(401)
+    }
+
+}
+
 
 function getuser (req, res) {
 
@@ -254,7 +301,7 @@ function setAdmin(req, res) {
   if(!req.params.id)
     res.sendStatus(401)
 
-  console.log("set this _id : ", req.params.id);
+  //console.log("set this _id : ", req.params.id);
 
   User.update({"_id" : req.params.id}, {"level" : 666}, function(err, stats){
     if(!!err) console.log("HORROR : ",err)
@@ -321,3 +368,5 @@ function signup(req, res) {
 
   })
 }
+
+module.exports = router

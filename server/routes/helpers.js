@@ -9,7 +9,26 @@ var   nodemailer        = require('nodemailer')
     , Q                 = require("q")
     , mailer            = require('../config/email')
     , validEmail        = require('../utils').validEmail
+    , User              = require("../models/user")
     , loadtemplate
+
+
+module.exports.controlAdmin = function (id) {
+  var dfd = Q.defer()
+
+  if(!!id && typeof id === "string") {
+    User.find({"_id":id}, function(err, docs){
+      var level = docs[0].level
+
+      if(!!level)
+        dfd.resolve(level === 666 ? true : false)
+      else
+        dfd.reject()
+
+    })
+  }
+  return dfd.promise
+}
 
 
 module.exports.sendEmail = function(model, deferred) {

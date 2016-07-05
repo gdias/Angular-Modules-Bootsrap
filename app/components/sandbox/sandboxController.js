@@ -17,12 +17,4 @@ function($scope, $http, $rootScope, $cookies){
       })
     }, 1000)
 
-
-  //
-  //
-  // setTimeout(function(){
-  //   console.log("clear");
-  //   clearInterval(interval)
-  // },4000)
-
 }]

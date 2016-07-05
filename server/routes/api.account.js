@@ -14,6 +14,8 @@ var express         = require('express')
 router.post('/edit/email', expressJwt({secret:KEY}), updateEmail)
 router.get('/edit/email/valid', expressJwt({secret:KEY}), validUpdateEmail)
 
+
+
 function validUpdateEmail(req, res) {
 
     // req.user.email

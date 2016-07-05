@@ -1,0 +1,14 @@
+<h2>Admin control</h2>
+<div>
+
+  <div id="users">
+    List of users
+    <div>
+      size of community {{users.length}}
+    </div>
+    <ul>
+      <li ng-repeat="v in users"><a href="/admin/user/{{v._id}}">{{v.email}}</a></li>
+    </ul>
+  </div>
+
+</div>
