@@ -24,10 +24,11 @@ module.exports.adminController = [
 
 
 module.exports.adminUsersController = [
-  '$http', '$q', '$scope', '$rootScope', '$routeParams','adminService'
+  '$http', '$q', '$scope', '$rootScope', '$routeParams', 'adminService'
 , function($http, $q, $scope, $rootScope, $routeParams, adminService){
   $scope.user = {}
 
+  //console.log(">>> >> edit : ",editDirective);
   console.log("$routeParams.id ::: ", $routeParams.id);
 
   $scope.msg = "ADMIN USER CONTROL"
@@ -36,7 +37,7 @@ module.exports.adminUsersController = [
 
   function ok(d) {
     $scope.user = d
-    
+
     console.log("adminUserService >>> ", d);
   }
 

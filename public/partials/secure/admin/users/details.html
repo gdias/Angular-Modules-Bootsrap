@@ -1,10 +1,8 @@
 <div>
   User data
-  <br>
-  {{user}}
   <div>
     <ul ng-repeat="v in user">
-      <li>username : {{v.username}}</li>
+      <li>username : <edit-directive>TOTO</edit-directive> </li>
       <li>email : {{v.email}}</li>
       <li>startDate : {{v.startDate}}</li>
       <li>active : {{v.active}}</li>
@@ -12,6 +10,7 @@
       <li>lastConnection : {{v.lastConnection}}</li>
       <li>hash : {{v.hash}}</li>
       <li>ip : {{v.ip}}</li>
+      <li>{{v.username}}</li>
     </ul>
   </div>
 </div>

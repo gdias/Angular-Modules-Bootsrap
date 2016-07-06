@@ -8,4 +8,7 @@ module.exports = {
   , service : {
     'adminService' : require('./adminService')
   }
+  , directive : {
+    'editDirective': require('../account/edit/editDirective')
+  }
 }

@@ -82,49 +82,31 @@ function ($q, $timeout, $http, $location, $rootScope, $cookies, dfd, token) {
   return dfd.promise
 }]
 
-
+// This module allow the load of Controllers, Services and Directives
 module.exports.addComponent = function (app, component) {
 
-  if (!!component.hasOwnProperty("controller"))
-    addController(app, component.controller)
-
-
-  if (!!component.hasOwnProperty("service"))
-    addService(app, component.service)
-
-
-  if (!component.hasOwnProperty("service") && !component.hasOwnProperty("controller"))
+  if (!component.hasOwnProperty("service")
+   && !component.hasOwnProperty("controller")
+   && !component.hasOwnProperty("directive")){
     throw "Bad arguments"
-
-}
-
-
-var addController = module.exports.addController = function (app, controller, foo, v, i) {
-
-  if (!!app && !!controller) {
-    for (foo in controller) {
-      i = controller[foo]
-      for(v in i) {
-        app.controller(v, i[v])
-      }
-    }
+    return
   }
-  else
-    throw "Error : Bad arguments"
 
-}
+    for(var v in component)
+      load(v, app, component[v])
 
-var addService = module.exports.addService = function (app, service, foo, v, i) {
 
-  if (!!app && !!service){
-    for (foo in service) {
-      i = service[foo]
-      for(v in i) {
-        app.service(v, i[v])
+    function load(type, app, controller, foo, v, i) {
+
+      if (!!type && !!app && !!controller) {
+        for (foo in controller) {
+          i = controller[foo]
+          for(v in i)
+            app[type](v, i[v])
+        }
       }
-    }
-  }
-  else
-    throw "Error : Bad arguments"
+      else
+        throw "Error : Bad arguments"
 
+    }
 }
