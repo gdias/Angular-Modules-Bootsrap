@@ -35,6 +35,32 @@ router.post('/validate', expressJwt({secret:KEY}), validate)
 router.get('/all', expressJwt({secret:KEY}), getAllUsers)
 router.get('/full/:id', expressJwt({secret:KEY}), getOneFull)
 
+router.put('/:id',  expressJwt({secret:KEY}), updateUser)
+router.delete('/:id', expressJwt({secret:KEY}), deleteUser)
+
+function deleteUser(req, res) {
+  console.log("DELETE USER ", req.params.id);
+  res.sendStatus(200)
+}
+
+function updateUser (req, res) {
+
+  if (!!req.params.id && !!req.body) {
+
+    var id = req.params.id
+    var data = req.body
+
+    User.update({'_id':id}, data, { upsert: true }, function(){
+      res.sendStatus(200)
+    })
+
+  } else {
+    res.sendStatus(401)
+  }
+
+}
+
+
 function getOneFull(req, res) {
   var id = req.params.id
   if (!!id)

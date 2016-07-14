@@ -1,16 +1,10 @@
 <div>
   User data
   <div>
-    <ul ng-repeat="v in user">
-      <li>username : <edit-directive>TOTO</edit-directive> </li>
-      <li>email : {{v.email}}</li>
-      <li>startDate : {{v.startDate}}</li>
-      <li>active : {{v.active}}</li>
-      <li>level : {{v.level}}</li>
-      <li>lastConnection : {{v.lastConnection}}</li>
-      <li>hash : {{v.hash}}</li>
-      <li>ip : {{v.ip}}</li>
-      <li>{{v.username}}</li>
+    <ul>
+      <li ng-repeat="(k, v) in user">
+        <edit-directive data-id="{{user._id}}" data-type="{{k}}" data-value="{{v}}"></edit-directive>
+      </li>
     </ul>
   </div>
 </div>
