@@ -7,11 +7,14 @@ module.exports.accountController = [
   $scope.message = "Account"
   $rootScope.$emit('updateMenuEvent')
 
-  
+}]
 
-  //console.log("rscope : ", $rootScope);
-  //$rootScope.menuAccount()
+module.exports.deleteController = [
+  '$scope', '$http', '$rootScope', '$cookies',
+  function signinController ($scope, $http, $rootScope, $cookies){
 
-  //  console.log("rootScope.auth : ", $rootScope.auth )
+  $scope.message = "Delete account"
+  $rootScope.$emit('updateMenuEvent')
+
 
 }]

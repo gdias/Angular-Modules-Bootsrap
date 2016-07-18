@@ -53,7 +53,6 @@ module.exports.editDirective = ['$http', '$log', function($http, $log) {
 
         datajson = {'id' : id} //, type:value}
         datajson[type] = value
-
         adminService.updateUser(datajson).then(function(response){
           console.log("update success ! ", response);
         }, function(err) {
@@ -63,12 +62,16 @@ module.exports.editDirective = ['$http', '$log', function($http, $log) {
 
     }
     , link: function ($scope, $element, $attrs) {
-      if (!!$attrs.value)
-        $scope.text = $attrs.value,
-        $scope.type = $attrs.type,
-        $scope.id = $attrs.id
-      else
-        $scope.text = ""
+
+      setTimeout(function(){
+        $scope.$apply(function() {
+          $scope.text = $attrs.value
+          $scope.type = $attrs.type
+          $scope.id = $attrs.id
+        })
+      }
+      , 50)
+
     }
   }
 }]

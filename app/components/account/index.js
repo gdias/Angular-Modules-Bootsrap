@@ -6,6 +6,8 @@ module.exports = {
       , 'editController': require("./edit/editController")
       , 'editEmailController': require("./edit/editEmailController")
       , 'emailEditValidController': require("./edit/editEmailController")
+      , 'editPwdController': require("./edit/editPwdController")
+      , 'deleteController': require('./accountController').deleteController
     }
   , service : {
       'accountService': require('./accountService')

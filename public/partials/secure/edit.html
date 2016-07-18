@@ -5,19 +5,12 @@
   </div>
   <div>
     <ul>
-      <li>
-          <edit-directive data-id="{{userID}}" data-type="username" data-value="{{usernameProfile}}"></edit-directive>
-      </li>
-      <li>Email contact : {{emailProfile}}</li>
+      <li><edit-directive data-id="{{userID}}" data-type="username" data-value="{{usernameProfile}}"></edit-directive></li>
+      <li>Email contact : {{emailProfile}} <a href="account/edit/email">edit</a></li>
       <li>Created date : {{startProfile}}</li>
       <li>Level : {{levelProfile}}</li>
+      <li><a href="account/edit/password">Change your password</a></li>
+      <li><a href="account/delete">Delete your account</a></li>
     </ul>
   </div>
-  <br> <br>
-  <ul>
-    <li><a href="account/edit/email">Change your email</a></li>
-    <li><a href="account/edit/password">Change your password</a></li>
-    <li><a href="account/delete">Delete your account</a></li>
-  </ul>
-
 </div>
