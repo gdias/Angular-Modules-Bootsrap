@@ -13,6 +13,8 @@ module.exports.editController = [
 
   function availableData(d) {
     if(!!d) {
+        console.log('>> foo >> ',d)
+      $scope.userID = d.data._id
       $scope.emailProfile = d.data.email
       $scope.startProfile = moment(d.data.startDate).fromNow()//.format("DD-MM-YYYY")
       $scope.levelProfile = d.data.level

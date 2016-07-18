@@ -26,11 +26,10 @@ module.exports.editDirective = ['$http', '$log', function($http, $log) {
           }, 50)
 
           keyUp = function (event){
-
             if (event.key === "Enter")
               input.blur()
-
           }
+
           document.addEventListener('keyup', keyUp, false);
       }
 
@@ -48,7 +47,7 @@ module.exports.editDirective = ['$http', '$log', function($http, $log) {
           return
 
         datajson = {'id' : id} //, type:value}
-            datajson[type] = value
+        datajson[type] = value
 
         adminService.updateUser(datajson).then(function(response){
           console.log("update success ! ", response);

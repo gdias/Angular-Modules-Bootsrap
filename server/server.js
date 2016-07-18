@@ -23,15 +23,14 @@ var express      = require('express')
   , KEY          = require("./config/auth").key
 
 
-module.exports = function(rootpath, port, api_port, secure_port, secure_api_port, welcome, welcomeAPI, db, parent, APIPathRoute) {
+module.exports = function(rootpath, port, api_port, secure_port, secure_api_port, welcome, db, parent, APIPathRoute) {
 
 // ========== Configuration Server & connect to MongoDB
   rootpath = path.resolve("./public")
 
   secure_port = 4443
 
-  welcome = ["The APP is hosted on : ",port," port"].join("")
-  welcomeAPI = ["The API is started on : ",api_port," port"].join("")
+  welcome = ["The APP is hosted on : ",secure_port," port"].join("")
 
   // configure Express
   app.use(morgan('dev'))
@@ -49,7 +48,8 @@ module.exports = function(rootpath, port, api_port, secure_port, secure_api_port
 
   // Auth routes api
   APIPathRoute = [
-      /^\/api\/auth/
+      /^\/api\/user/  
+    , /^\/api\/auth/
     , /^\/api\/user\/setadmin\/.*/
     , /^\/api\/verify\/email/
     , /^\/api\/verify\/email\/different/

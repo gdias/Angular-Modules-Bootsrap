@@ -115,9 +115,11 @@ function getuser (req, res) {
       if (!!err) throw err
       if (!!docs) {
           res.json({
-              email:docs[0].email
+              id : docs[0]._id
+            , email : docs[0].email
             , username : docs[0].username
             , startDate : docs[0].startDate
+            , lastConnection : docs[0].lastConnection
             , level : docs[0].level
             , active : docs[0].active
           })

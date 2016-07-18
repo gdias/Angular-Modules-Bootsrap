@@ -35,8 +35,11 @@ function adminVerif(req, res) {
 
 function auth (req, res) {
 
-  var em = req.body.email
-  var pw = req.body.pwd
+    if (!req.body)
+        res.sendStatus(500)
+
+    var em = req.body.email
+    var pw = req.body.pwd
 
   // check email
   User.find({email:em}, function (err, docs, passCrypted, tokenJWT) {
@@ -55,10 +58,22 @@ function auth (req, res) {
               , username : req.body.email
             }, KEY)
 
-            //update lastConnection
-            User.update({'_id':userID}, {'lastConnection': moment().format()})
 
-            res.json(tokenJWT)
+
+            User.update(
+                { 'email' : docs[0].email }
+              , { 'lastConnection' : moment().format() }
+                , function(err, stats){
+                      if(!!err) console.log("HORROR : ",err)
+
+
+                     if(!!stats.ok)
+                     res.json(tokenJWT)
+                }
+            )
+
+
+
           }
           else {
             // create an other token for validate account
@@ -107,7 +122,7 @@ function resendActivateEmail (req, res) {
 }
 
 function authValid(req, res) {
-    console.log("/get USER with param>",req.user)
+    //console.log("/get USER with param>",req.user)
 
     // TODO : control data
     // if not good data
