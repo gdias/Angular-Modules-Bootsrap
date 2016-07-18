@@ -1,5 +1,7 @@
 'use strict'
 
+var helpers = require("../../helpers")
+
 module.exports.editDirective = ['$http', '$log', function($http, $log) {
   return {
     restrict: 'E'
@@ -45,6 +47,9 @@ module.exports.editDirective = ['$http', '$log', function($http, $log) {
 
         if (!type || !value || !id)
           return
+
+        // control data
+        value = helpers.htmlSpecialChars(value)
 
         datajson = {'id' : id} //, type:value}
         datajson[type] = value
