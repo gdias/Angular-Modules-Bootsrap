@@ -85,7 +85,8 @@ module.exports.sender = function(sendModel, deferred, sendData, transporter) {
       else
         deferred.resolve(info)
 
-      console.log('Message sent: ' + info.response)
+        if (!!info)
+            console.log('Message sent: ' + info.response)
     })
 
     return deferred.promise

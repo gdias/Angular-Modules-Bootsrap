@@ -4,13 +4,13 @@ module.exports = {
     controller : {
         'accountController': require('./accountController')
       , 'editController': require("./edit/editController")
-      , 'emailEditController': require("./edit/emailEditController")
-      , 'emailEditValidController': require("./edit/emailEditController")
+      , 'editEmailController': require("./edit/editEmailController")
+      , 'emailEditValidController': require("./edit/editEmailController")
     }
   , service : {
       'accountService': require('./accountService')
     , 'editService': require("./edit/editService")
-    , 'emailEditService': require("./edit/emailEditService")
+    , 'editEmailService': require("./edit/editEmailService")
   }
   // , directive : {
   //   'edit': require('./edit/editDirective')

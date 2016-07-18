@@ -26,7 +26,7 @@ module.exports.accountRoutes = (function() {
   // Email edit
   routes.add("/account/edit/email", {
       templateUrl: 'partials/secure/edit.email.html'
-    , controller: 'emailEditController'
+    , controller: 'editEmailController'
     , resolve: {
         loggedin : checkAuth
     }
@@ -35,7 +35,7 @@ module.exports.accountRoutes = (function() {
   // Email edit
   routes.add("/account/edit/email/valid", {
       templateUrl: 'partials/secure/edit.email.html'
-    , controller: 'emailEditController'
+    , controller: 'editEmailController'
     , resolve: {
         loggedin : checkAuth
     }

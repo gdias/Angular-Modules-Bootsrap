@@ -2,10 +2,10 @@
 
 var validEmail = require('../../../../server/utils').validEmail
 
-module.exports.emailEditController = ['$scope', '$http', '$rootScope', '$cookies', "emailEditService", "signupService"
-, function signinController ($scope, $http, $rootScope, $cookies, emailEditService, signupService){
+module.exports.editEmailController = ['$scope', '$http', '$rootScope', '$cookies', "editEmailService", "signupService"
+, function signinController ($scope, $http, $rootScope, $cookies, editEmailService, signupService){
 
-  //console.log(emailEditService);
+  //console.log(editEmailService);
   $scope.sendButtonShow = true
   $scope.validShow = false
   $scope.errMsg = ""
@@ -33,7 +33,7 @@ module.exports.emailEditController = ['$scope', '$http', '$rootScope', '$cookies
 
             if(!!$scope.errShow) $scope.errShow = false // set Error show at false for hide it
 
-          //  emailEditService.differentOld(emailControlled).then(successDiffHandler, errorHandler)
+          //  editEmailService.differentOld(emailControlled).then(successDiffHandler, errorHandler)
             $http({
                   method: "POST"
                 , url: "/api/account/edit/email"

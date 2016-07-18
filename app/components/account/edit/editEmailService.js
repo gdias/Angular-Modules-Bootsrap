@@ -1,6 +1,6 @@
 "use strict"
 
-module.exports.emailEditService = ["$http", "$q", "$cookies",
+module.exports.editEmailService = ["$http", "$q", "$cookies",
     function($http, $q, $cookies){
 
 
