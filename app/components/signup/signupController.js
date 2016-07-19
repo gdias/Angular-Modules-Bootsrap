@@ -11,13 +11,13 @@ function signupController ($scope, $http, signupService, $window){
   $scope.form.exist = false
   $scope.form.validPass = false
 
-  $scope.$watch('form.validPwdSize', function() {
-      console.log('validPwdSize has changed!');
-  });
-
-  $scope.$watch('form.validPwdNum', function() {
-      console.log('validPwdNum has changed!');
-  });
+  // $scope.$watch('form.validPwdSize', function() {
+  //     console.log('validPwdSize has changed!');
+  // });
+  //
+  // $scope.$watch('form.validPwdNum', function() {
+  //     console.log('validPwdNum has changed!');
+  // });
 
 
   $scope.focusPassValid = function() {
@@ -30,7 +30,7 @@ function signupController ($scope, $http, signupService, $window){
 
   $scope.checkEmailFormat = function(){
       $scope.form.validEmailFormat = false
-      console.log($scope.form.email," - args",arguments, $scope.form.emailvalid)
+      //console.log($scope.form.email," - args",arguments, $scope.form.emailvalid)
   }
 
   $scope.checkPwdForce = function() {

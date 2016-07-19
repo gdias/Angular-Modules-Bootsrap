@@ -16,5 +16,10 @@ module.exports.deleteController = [
   $scope.message = "Delete account"
   $rootScope.$emit('updateMenuEvent')
 
+  $scope.deleteAccount = function(e) {
+    e.preventDefault()
+    // send email for delete your account
+
+  }
 
 }]

@@ -5,7 +5,9 @@ var express         = require('express')
   , jwt             = require("jsonwebtoken")
   , User            = require("../models/user")
   , validEmail      = require("../utils").validEmail
+  , validPwd        = require("../utils").validPwd
   , sendChangeEmail = require("../emails/account").sendEmailChangeEmail
+  , sendChangePwd   = require("../emails/account").sendEmailChangePwd
   , Hash            = require('../utils').hash
   , expressJwt      = require("express-jwt")
   , KEY             = require("../config/auth").key
@@ -13,6 +15,9 @@ var express         = require('express')
 
 router.post('/edit/email', expressJwt({secret:KEY}), updateEmail)
 router.get('/edit/email/valid', expressJwt({secret:KEY}), validUpdateEmail)
+
+router.post('/edit/pwd', expressJwt({secret:KEY}), updatePassword)
+router.post('/edit/pwd/valid', expressJwt({secret:KEY}), validUpdatePassword)
 
 
 
@@ -92,7 +97,34 @@ function updateEmail(req, res){
   res.sendStatus(200)
 }
 
+function updatePassword(req, res) {
+  var pwdControlled, newHash, tokenJWT, id
 
+  id = req.user.id
+
+
+
+  newHash = Hash.generate()
+
+  tokenJWT = jwt.sign({
+      expiresIn : "1d"
+    , pwd : pwdControlled
+    , hash : newHash
+  }
+  , KEY)
+
+  // pwdControlled
+  // sendEmailChangePwd
+  // sendChangeEmail(emailControlled, tokenJWT).then(success, fail)
+
+
+  res.sendStatus(200)
+}
+
+function validUpdatePassword(req, res) {
+
+  res.sendStatus(200)
+}
 
 
 

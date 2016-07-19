@@ -1,5 +1,7 @@
 "use strict"
 
+var config = require("./config/auth")
+
 module.exports.hash = function(self){
 
   self.alpha = "abcdefghijklmnopqrstuvwxyz"
@@ -101,5 +103,42 @@ module.exports.validEmail = function(email, self) {
       return false
 
   }
+
+}
+
+
+module.exports.validPwd = function(pwd) {
+
+  if (!pwd && typeof pwd !== "string")
+    return false
+
+
+
+    var validPwd = (function(){
+
+      console.log('pwd => ',pwd)
+
+    }())
+
+
+    function checkPwdSize(pwd, min, max) {
+      min = config.pwdSizeMin
+      max = config.pwdSizeMax
+
+      return !!pwd ? pwd.length > min  && pwd.length < max ? true : false : false
+    }
+
+    function checkPwdNum(pwd) {
+      return !!pwd && !!pwd.match(/\d+/g) ? true : false
+    }
+
+
+
+
+    return {
+        checkPwdNum : checkPwdNum
+      , checkPwdSize : checkPwdSize
+      , validPwd : validPwd
+    }
 
 }
