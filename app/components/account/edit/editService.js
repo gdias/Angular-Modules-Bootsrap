@@ -1,7 +1,7 @@
 "use strict"
 
 var jwt = require("jsonwebtoken")
-  
+
 module.exports.editService = ["$http", "$q", "$cookies",
     function($http, $q, $cookies){
 
@@ -28,9 +28,27 @@ module.exports.editService = ["$http", "$q", "$cookies",
       }
 
 
+      function checkPassword(ctrlPwd) {
+
+          return (!ctrlPwd
+                        ? false
+                        :  $http ({
+                                  method:'POST'
+                                , url :'/api/verify/pwd'
+                                , data : {pwd : ctrlPwd}
+                                , headers : {
+                                  'Authorization': ['Bearer ',$cookies.get("jwt-token")].join("")
+                                }
+                            })
+                        )
+
+      }
+
+
       return {
           getInfoUserById : getInfoUser
         , getInfoUser : getInfoThisUser
+        , checkPwd : checkPassword
       }
 
     }

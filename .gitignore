@@ -10,3 +10,5 @@ data
 
 #npm
 .npm
+
+public/js/main.js

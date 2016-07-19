@@ -59,6 +59,15 @@ module.exports.accountRoutes = (function() {
     }
   })
 
+  // Password edit valid
+  routes.add("/account/edit/password/:token", {
+    templateUrl: 'partials/secure/edit.password.html'
+    , controller: 'editPwdControllerValid'
+    , resolve: {
+      loggedin : checkAuth
+    }
+  })
+
   // Delete account
   routes.add("/account/delete", {
     templateUrl: 'partials/secure/delete.account.html'
