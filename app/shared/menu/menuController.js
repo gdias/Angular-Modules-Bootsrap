@@ -1,8 +1,8 @@
 "use strict"
 
-module.exports.menuController = [ 
-  '$scope', '$http', '$rootScope', 'accountService'
-, function menuController ($scope, $http, $rootScope, accountService){
+module.exports.menuController = [
+  '$scope', '$http', '$rootScope', 'accountService', '$translate'
+, function menuController ($scope, $http, $rootScope, accountService, $translate){
 
   $scope.message = "Menu items"
   $scope.tpl = {}
@@ -11,6 +11,11 @@ module.exports.menuController = [
   $scope.logout = function(e) {
     e.preventDefault()
     accountService.logout()
+  }
+
+  $scope.changeLang = function(lang) {
+      console.log('foo ',lang)
+      $translate.use(lang)
   }
 
   $rootScope.$on('updateMenuEvent', function (event, data) {

@@ -1,9 +1,13 @@
 <nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
   <a class="navbar-brand" href="/#/">Angular App</a>
   <div class="nav navbar-nav" role="navigation">
-    <a href="/" class="nav-item nav-link active">Home</a>
-    <a href="about" class="nav-item nav-link">About</a>
-    <a href="contact" class="nav-item nav-link">Contact</a>
+    <a href="/" class="nav-item nav-link active" translate="website.commons.header.menu_items.home">Home</a>
+    <a href="about" class="nav-item nav-link" translate="website.commons.header.menu_items.about">About</a>
+    <a href="contact" class="nav-item nav-link" translate="website.commons.header.menu_items.contact">Contact</a>
+  </div>
+  <div class="">
+      <a href="#" ng-click="changeLang('en')">English</a>
+      <a href="#" ng-click="changeLang('fr')">French</a>
   </div>
   <div class="nav navbar-nav" role="sign">
     <a href="signin" class="nav-item nav-link">Sign IN</a>

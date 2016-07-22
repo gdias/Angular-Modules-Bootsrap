@@ -1,11 +1,11 @@
 require('angular')
 
 var ngRoute = require('angular-route')
-  , ngCookies = require('angular-cookies')
-  , translate = require('angular-translate')
-  , helpers = require('./routes/helpers')
-  , routes = require("./routes/routes").config
-  , app = angular.module('app', ['ngRoute', 'ngCookies'])
+    , ngCookies = require('angular-cookies')
+    , helpers = require('./routes/helpers')
+    , routes = require("./routes/routes").config
+    , ngtranslate = require('angular-translate')
+    , app = angular.module('app', ['ngRoute', 'ngCookies', 'pascalprecht.translate'])
 
   app.config(routes)
 

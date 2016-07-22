@@ -1,18 +1,19 @@
-{
+module.exports = {
   "website" : {
     "commons" : {
       "header" : {
-        "menu" : {
-          "home" : "Home"
-        , "about" : "About"
-        , "contact" : "Contact"
+        "menu_items" : {
+              "home" : "Home"
+            , "about" : "About"
+            , "contact" : "Contact"
         }
+
       }
       , "footer" : {
         "copyright" : "2016 - Copyright"
       }
     }
-    "pages" : {
+    , "pages" : {
       "about" : {
         "title" : ""
         , "desc" : ""
