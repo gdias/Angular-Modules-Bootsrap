@@ -23,10 +23,12 @@ var express      = require('express')
   , KEY          = require("./config/auth").key
 
 
-module.exports = function(rootpath, port, api_port, secure_port, secure_api_port, welcome, db, parent, APIPathRoute) {
+module.exports = function(rootpath, appPath, port, api_port, secure_port, secure_api_port, welcome, db, parent, APIPathRoute) {
 
 // ========== Configuration Server & connect to MongoDB
   rootpath = path.resolve("./public")
+  appPath = path.resolve("./app")
+  //nModulesPath = path.resolve("./nodes_modules")
 
   secure_port = 4443
 
@@ -48,7 +50,7 @@ module.exports = function(rootpath, port, api_port, secure_port, secure_api_port
 
   // Auth routes api
   APIPathRoute = [
-      /^\/api\/user/  
+      /^\/api\/user/
     , /^\/api\/auth/
     , /^\/api\/user\/setadmin\/.*/
     , /^\/api\/verify\/email/
@@ -62,6 +64,16 @@ module.exports = function(rootpath, port, api_port, secure_port, secure_api_port
   // API secured
   //app.all("/api", expressJWT({secret:"ilovecats"}).unless({path:APIPathRoute}))
   app.use("/api", expressJWT({secret:KEY}).unless({path:APIPathRoute}), require('./routes'))
+
+  app.get("/resources/*", function(req, res){
+    var p = [appPath, "/", req.url].join("")
+    res.sendFile(p)
+  })
+
+  app.get("/node_modules/*", function(req, res){
+    var p = [path.resolve("./"), req.url].join("")
+    res.sendFile(p)
+  })
 
   app.get('*', function (req, res) {
     var p = [rootpath, '/' ,'index.html'].join("")

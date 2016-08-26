@@ -15,7 +15,11 @@
   "dependencies": {
     "angular": "~1.5.0-rc.0",
     "angular-cookies": "^1.5.0",
+    "angular-dynamic-locale": "^0.1.32",
     "angular-route": "^1.4.8",
+    "angular-translate-handler-log": "^2.11.1",
+    "angular-translate-loader-static-files": "^2.11.1",
+    "angular-translate-storage-local": "^2.11.1",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.14.2",
     "connect-flash": "^0.1.1",
@@ -41,7 +45,12 @@
     "q": "^1.4.1"
   },
   "devDependencies": {
+    "angular-dynamic-locale": "^0.1.32",
+    "angular-i18n": "^1.5.8",
     "angular-translate": "^2.11.0",
+    "angular-translate-handler-log": "^2.11.1",
+    "angular-translate-loader-static-files": "^2.11.1",
+    "angular-translate-storage-local": "^2.11.1",
     "browser-sync": "^2.9.11",
     "browserify": "~12.0",
     "connect-livereload": "^0.5.4",

@@ -15,7 +15,4 @@ module.exports = {
     , 'editService': require("./edit/editService")
     , 'editEmailService': require("./edit/editEmailService")
   }
-  // , directive : {
-  //   'edit': require('./edit/editDirective')
-  // }
 }

@@ -112,12 +112,8 @@ module.exports.validPwd = function(pwd) {
   if (!pwd && typeof pwd !== "string")
     return false
 
-
-
     var validPwd = (function(){
-
-      console.log('pwd => ',pwd)
-
+      return (!!checkPwdSize(pwd) && !!checkPwdNum(pwd) ? pwd : false)
     }())
 
 
@@ -131,9 +127,6 @@ module.exports.validPwd = function(pwd) {
     function checkPwdNum(pwd) {
       return !!pwd && !!pwd.match(/\d+/g) ? true : false
     }
-
-
-
 
     return {
         checkPwdNum : checkPwdNum

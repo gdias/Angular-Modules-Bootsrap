@@ -1,17 +1,14 @@
+"use strict"
+
 module.exports = {
   "website" : {
     "commons" : {
-      "header" : {
-        "menu_items" : {
-              "home" : "Home"
-            , "about" : "About"
-            , "contact" : "Contact"
+        "menu" : {
+            "home" : "Home"
+          , "about" : "About"
+          , "contact" : "Contact"
         }
-
-      }
-      , "footer" : {
-        "copyright" : "2016 - Copyright"
-      }
+        , "copyright" : "2016 - Copyright"
     }
     , "pages" : {
       "about" : {

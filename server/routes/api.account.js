@@ -102,7 +102,11 @@ function updatePassword(req, res) {
 
   id = req.user.id
 
+  pwdControlled = validPwd(pwd).validPwd
 
+  console.log(pwdControlled);
+
+  return
 
   newHash = Hash.generate()
 
@@ -112,6 +116,8 @@ function updatePassword(req, res) {
     , hash : newHash
   }
   , KEY)
+
+  link = ["/account/edit/password/",tokenJWT].join("")
 
   // pwdControlled
   // sendEmailChangePwd

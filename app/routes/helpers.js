@@ -96,11 +96,11 @@ module.exports.addComponent = function (app, component) {
       load(v, app, component[v])
 
 
-    function load(type, app, controller, foo, v, i) {
+    function load(type, app, content, foo, v, i) {
 
-      if (!!type && !!app && !!controller) {
-        for (foo in controller) {
-          i = controller[foo]
+      if (!!type && !!app && !!content) {
+        for (foo in content) {
+          i = content[foo]
           for(v in i)
             app[type](v, i[v])
         }
