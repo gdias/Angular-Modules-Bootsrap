@@ -1,4 +1,9 @@
 {
     "directives.language-select.Language" : "Français"
   , "commons.menu.home" : "Accueil"
+  , "commons.menu.about" : "A propos"
+  , "commons.menu.contact" : "Contact"
+  , "commons.menu.signin" : "Connexion"
+  , "commons.menu.signup" : "Inscription"
+
 }

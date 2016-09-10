@@ -1,15 +1,16 @@
 <nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
   <a class="navbar-brand" href="/">Angular App</a>
   <div class="nav navbar-nav" role="navigation">
-    <a href="/" class="nav-item nav-link active">{{ commons.menu.home | translate }}</a>
-    <!-- <a href="about" class="nav-item nav-link" translate="website.commons.header.menu_items.about">About</a>
-    <a href="contact" class="nav-item nav-link" translate="website.commons.header.menu_items.contact">Contact</a> -->
+    <a href="/" class="nav-item nav-link active">{{ "commons.menu.home" | translate }}</a>
+    <a href="about" class="nav-item nav-link">{{ "commons.menu.about" | translate }}</a>
+    <a href="contact" class="nav-item nav-link">{{ "commons.menu.contact" | translate }}</a>
   </div>
- 
-  <div locale-directive></div>
-
   <div class="nav navbar-nav" role="sign">
-    <a href="signin" class="nav-item nav-link">Sign IN</a>
-    <a href="signup" class="nav-item nav-link">Sign UP</a>
+    <a href="signin" class="nav-item nav-link">{{ "commons.menu.signin" | translate }}</a>
+    <a href="signup" class="nav-item nav-link">{{ "commons.menu.signup" | translate }}</a>
   </div>
 </nav>
+<div>
+  <div locale-directive></div>
+
+</div>

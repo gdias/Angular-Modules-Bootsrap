@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports.localeDirective = ['localeService', function(localeService) {
-  
+
     return {
         restrict: 'A',
         replace: true,
@@ -19,8 +19,7 @@ module.exports.localeDirective = ['localeService', function(localeService) {
         controller: function ($scope) {
             $scope.currentLocaleDisplayName = localeService.getLocaleDisplayName();
             $scope.localesDisplayNames = localeService.getLocalesDisplayNames();
-            $scope.visible = $scope.localesDisplayNames &&
-            $scope.localesDisplayNames.length > 1;
+            $scope.visible = $scope.localesDisplayNames && $scope.localesDisplayNames.length > 1;
 
             $scope.changeLanguage = function (locale) {
                 localeService.setLocaleByDisplayName(locale);
