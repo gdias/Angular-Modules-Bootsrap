@@ -1,15 +1,15 @@
 <div ng-controller="signupController">
   <h3>{{message}}</h3>
   <p>
-    Start by to create an account
+    {{ "auth.signup.title" | translate }}
   </p>
   <form ng-submit="signUpUser()" name="signUPform">
     <span class="error" ng-show="myForm.input.$error.required">Required!</span>
     <div>
       <input type="email" placeholder="email" ng-model="form.email" name="email" ng-change="checkEmailExist()" required>
-      <span ng-show="form.emailvalid">email not already used</span>
+      <span ng-show="form.emailvalid">{{"auth.signup.validEmail" | translate}}</span>
       <div ng-show="form.exist">
-        you've already account ? <a href="#/signin">login you !</a>
+        {{"auth.signup.emailAlreadyExist" | translate}} <a href="#/signin">{{"auth.signup.signin" | translate}}</a>
       </div>
     </div>
     <div ng-hide="form.exist">
@@ -17,14 +17,14 @@
         <input type="password" placeholder="Password" ng-model="form.pwd" name="pwd" ng-change="checkPwdForce()" ng-focus="focusPassValid()" ng-blur="blurPassValid()" required>
         <div class="required" ng-show="form.validPass">
           <ul>
-            <li ng-hide="form.validPwdSize">6 characters min</li>
+            <li ng-hide="form.validPwdSize">{{"auth.signup.pwd.length" | translate}}</li>
             <li ng-hide="form.validPwdNum">One numeric characters required</li>
           </ul>
         </div>
       </div>
       <div>
         <input type="password" placeholder="Password Confirm" ng-model="form.pwdconfirm" name="pwdconfirm" ng-change="checkPwdSame()" required>
-        <span ng-show="form.validPwdConfirm">same pwd ok</span>
+        <span ng-show="form.validPwdConfirm">{{"auth.signup.pwd.areSame" | translate}}</span>
       </div>
       <div>
         {{form.error}}
@@ -32,9 +32,6 @@
       <div>
         <input type="submit" value="Sign up now">
       </div>
-    </div>
-    <div ng-show="debug">
-      form model : {{form | json}}
     </div>
   </form>
 </div>

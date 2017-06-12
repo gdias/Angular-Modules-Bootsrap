@@ -1,6 +1,7 @@
-@import "colors";
-@import "helpers";
-@import "auth";
+@import "base/_colors";
+@import "base/_helpers";
+@import "base/_auth";
+
 
 .container {
   padding-top: 80px;

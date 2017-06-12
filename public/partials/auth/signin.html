@@ -1,15 +1,15 @@
 <h3>{{message}}</h3>
 <p>
-  Start by to signin for access at your account
+  {{"auth.signin.title" | translate}}
 </p>
 <form id="signin" ng-submit="auth()">
   <div>
-    <input type="email" id="email" placeholder="Email" ng-model="form.email" required /> &nbsp;
-    <input type="password" id="pwd" placeholder="Password" ng-model="form.pwd" required /> &nbsp;
-    <input type="submit" value="Sign In" /> <br>
-    <input type="checkbox" id="persist" ng-model="form.persist" checked />&nbsp;<label for="persist">Persist sign in</label>
+    <input type="email" id="email" placeholder="{{'auth.signin.placeholder.email' | translate}}" ng-model="form.email" required /> &nbsp;
+    <input type="password" id="pwd" placeholder="{{'auth.signin.placeholder.pwd' | translate}}" ng-model="form.pwd" required /> &nbsp;
+    <input type="submit" value="{{'auth.signin.button' | translate}}" /> <br>
+    <input type="checkbox" id="persist" ng-model="form.persist" checked />&nbsp;<label for="persist">{{"auth.signin.persist" | translate}}</label>
     <br>
-    <a href="/renewPassword/start">Password lost ?</a>
+    <a href="/renewPassword/start">{{"auth.signin.lostPwd" | translate}}</a>
   </div>
   <div class="error">
     {{error}} <br>

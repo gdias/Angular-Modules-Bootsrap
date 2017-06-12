@@ -6,4 +6,29 @@
   , "commons.menu.signin" : "Sign in"
   , "commons.menu.signup" : "Sign up"
 
+  , "auth.signup.title" : "Enter a email and password"
+  , "auth.signup.validEmail" : "Email not already used"
+  , "auth.signup.emailAlreadyExist" : "Have you already an account ?"
+  , "auth.signup.signin" : "Sign In"
+  , "auth.signup.pwd.length" : "6 characters min"
+  , "auth.signup.pwd.numeric" : "One numeric character is required"
+  , "auth.signup.pwd.areSame" : "The password are same"
+  , "auth.signup.valid" : "Your account has been created."
+  , "auth.signup.link" : "For activate your account, you must click on the link present in email just to send you."
+  , "auth.signup.contact" : "Please, if you occur an error with it, contact us."
+  , "auth.signup.activated" : "Your account is activated, now you can sign in"
+
+  , "auth.signin.title" : "Enter your credentials"
+  , "auth.signin.persist" : "Persist sign in"
+  , "auth.signin.button" : "Sign In"
+  , "auth.signin.placeholder.email" : "Email"
+  , "auth.signin.placeholder.pwd" : "Password"
+  , "auth.signin.lostPwd" : "Password lost ?"
+  , "auth.signin.lostPwd.title" : "Have you lost your Password ?"
+  , "auth.signin.lostPwd.line1" : "With this page you can get a new password,"
+  , "auth.signin.lostPwd.line2" : "just follow the process and click on next button"
+  , "auth.signin.lostPwd.next" : "Next step"
+  
+  , "auth.signin.lostPwd.step1.line1" : "Please, to generate an new password for your account,"
+
 }

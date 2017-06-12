@@ -6,4 +6,27 @@
   , "commons.menu.signin" : "Connexion"
   , "commons.menu.signup" : "Inscription"
 
+  , "auth.signup.title" : "Veuillez entrer une adresse email et un mot de passe"
+  , "auth.signup.validEmail" : "Cet email est libre"
+  , "auth.signup.emailAlreadyExist" : "Avez vous déjà un compte ?"
+  , "auth.signup.signin" : "Connectez-vous"
+  , "auth.signup.pwd.length" : "6 caractères minimum"
+  , "auth.signup.pwd.numeric" : "1 chiffre minimum"
+  , "auth.signup.pwd.areSame" : "Les mots de passe sont identiques"
+  , "auth.signup.valid" : "Votre compte a bien été créé"
+  , "auth.signup.link" : "Vous devez cliquer sur le lien présent dans l'email que vous venez de recevoir pour activer votre compte"
+  , "auth.signup.contact" : "Si vous avez rencontré un problème, contactez-nous."
+  , "auth.signup.activated" : "Votre compte est désormais actif, vous pouvez désormais vous identifier. "
+
+  , "auth.signin.title" : "Veuillez entrer vos identifiants"
+  , "auth.signin.persist" : "Se souvenir de moi"
+  , "auth.signin.button" : "Se connecter"
+  , "auth.signin.placeholder.email" : "Email"
+  , "auth.signin.placeholder.pwd" : "Mot de passe"
+  , "auth.signin.lostPwd" : "Mot de passe oublié ?"
+  , "auth.signin.lostPwd.title" : "Avez-vous perdu votre mot de passe ?"
+  , "auth.signin.lostPwd.line1" : "Cette page vous permettra d'en obtenir un nouveau,"
+  , "auth.signin.lostPwd.line2" : "il vous suffit de suivre la procédure en cliquant sur le bouton suivant."
+  , "auth.signin.lostPwd.next" : "Prochaine étape"
+  
 }

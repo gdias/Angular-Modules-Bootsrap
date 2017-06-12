@@ -104,9 +104,9 @@ function updatePassword(req, res) {
 
   pwdControlled = validPwd(pwd).validPwd
 
-  console.log(pwdControlled);
-
-  return
+  // console.log(pwdControlled);
+  //
+  // return
 
   newHash = Hash.generate()
 

@@ -7,9 +7,11 @@ module.exports.localeService = function ($translate, LOCALES, $rootScope, tmhDyn
 
     // locales and locales display names
     var _LOCALES = Object.keys(localesObj);
+
     if (!_LOCALES || _LOCALES.length === 0) {
       console.error('There are no _LOCALES provided');
     }
+
     var _LOCALES_DISPLAY_NAMES = [];
     _LOCALES.forEach(function (locale) {
       _LOCALES_DISPLAY_NAMES.push(localesObj[locale]);
@@ -33,6 +35,11 @@ module.exports.localeService = function ($translate, LOCALES, $rootScope, tmhDyn
       // asking angular-translate to load and apply proper translations
       $translate.use(locale);
     };
+
+    // set default
+    if (!localStorage.getItem("NG_TRANSLATE_LANG_KEY"))
+      if (!!LOCALES.preferredLocale)
+        setLocale(LOCALES.preferredLocale)
 
     // EVENTS
     // on successful applying translations by angular-translate

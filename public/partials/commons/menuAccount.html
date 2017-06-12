@@ -1,11 +1,13 @@
 <nav class="navbar navbar-fixed-top navbar-dark bg-inverse">
   <a class="navbar-brand" href="#">Angular App</a>
   <div class="nav navbar-nav" role="navigation">
-    <a href="account" class="nav-item nav-link active">Account</a>
-    <a href="about" class="nav-item nav-link">About</a>
-    <a href="contact" class="nav-item nav-link">Contact</a>
+    <a href="account" class="nav-item nav-link active">{{ "commons.menu.account" | translate }}</a>
+    <a href="contact" class="nav-item nav-link">{{ "commons.menu.contact" | translate }}</a>
+    <a href="logout" class="nav-item nav-link" ng-click="logout($event)">{{ "commons.menu.logout" | translate }}</a>
   </div>
-  <div class="nav navbar-nav" role="sign">
-    <a href="logout" class="nav-item nav-link" ng-click="logout($event)">Log Out</a>
+  <div class="nav navbar-nav" role="lang">
+    <div locale-directive></div>
   </div>
 </nav>
+
+<link rel="stylesheet" href="/css/account.css">

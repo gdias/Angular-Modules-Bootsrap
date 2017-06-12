@@ -11,14 +11,6 @@ function signupController ($scope, $http, signupService, $window){
   $scope.form.exist = false
   $scope.form.validPass = false
 
-  // $scope.$watch('form.validPwdSize', function() {
-  //     console.log('validPwdSize has changed!');
-  // });
-  //
-  // $scope.$watch('form.validPwdNum', function() {
-  //     console.log('validPwdNum has changed!');
-  // });
-
 
   $scope.focusPassValid = function() {
     $scope.form.validPass = true

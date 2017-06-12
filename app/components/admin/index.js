@@ -9,6 +9,6 @@ module.exports = {
     'adminService' : require('./adminService')
   }
   , directive : {
-    'editDirective': require('../account/edit/editDirective')
+    'editDirective' : require('../account/edit/editDirective')
   }
 }

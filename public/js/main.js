@@ -681,7 +681,7 @@ module.exports = {
     'adminService' : require('./adminService')
   }
   , directive : {
-    'editDirective': require('../account/edit/editDirective')
+    'editDirective' : require('../account/edit/editDirective')
   }
 }
 
@@ -720,6 +720,11 @@ module.exports.htmlSpecialChars = function(str) {
   return  (!str || typeof str === "string"
     ? str.replace(/[&<>]/g, replaceTag)
     : false)
+
+}
+
+module.exports.join = function(array) {
+  return (typeof array != "undefined" && array.length != 0 ? array.join("") : false)
 
 }
 
@@ -1133,14 +1138,6 @@ function signupController ($scope, $http, signupService, $window){
   $scope.form.exist = false
   $scope.form.validPass = false
 
-  // $scope.$watch('form.validPwdSize', function() {
-  //     console.log('validPwdSize has changed!');
-  // });
-  //
-  // $scope.$watch('form.validPwdNum', function() {
-  //     console.log('validPwdNum has changed!');
-  // });
-
 
   $scope.focusPassValid = function() {
     $scope.form.validPass = true
@@ -1478,6 +1475,8 @@ module.exports.adminRoutes = (function() {
   })
 
 
+
+
 })()
 
 },{"./base":33,"./helpers":34}],32:[function(require,module,exports){
@@ -1762,26 +1761,20 @@ module.exports = {
 'use strict'
 
 module.exports.localeDirective = ['localeService', function(localeService) {
-  
+
     return {
         restrict: 'A',
         replace: true,
-        template: ''+
-        '<div class="language-select" ng-if="visible">'+
-            '<label>'+
-                '{{"directives.language-select.Language" | translate}}:'+
-                '<select ng-model="currentLocaleDisplayName"'+
-                    'ng-options="localesDisplayName for localesDisplayName in localesDisplayNames"'+
-                    'ng-change="changeLanguage(currentLocaleDisplayName)">'+
-                '</select>'+
-            '</label>'+
-        '</div>'+
-        '',
+        template: ' \
+          <div class="language-select" ng-if="visible"> \
+                <div ng-model="currentLocaleDisplayName">\
+                    <a ng-repeat="localesDisplayName in localesDisplayNames" href="#" ng-click="changeLanguage(localesDisplayName)" class="btn btn-default">{{localesDisplayName}}</a>\
+                </div>\
+        </div>',
         controller: function ($scope) {
             $scope.currentLocaleDisplayName = localeService.getLocaleDisplayName();
             $scope.localesDisplayNames = localeService.getLocalesDisplayNames();
-            $scope.visible = $scope.localesDisplayNames &&
-            $scope.localesDisplayNames.length > 1;
+            $scope.visible = $scope.localesDisplayNames && $scope.localesDisplayNames.length > 1;
 
             $scope.changeLanguage = function (locale) {
                 localeService.setLocaleByDisplayName(locale);
@@ -1800,9 +1793,11 @@ module.exports.localeService = function ($translate, LOCALES, $rootScope, tmhDyn
 
     // locales and locales display names
     var _LOCALES = Object.keys(localesObj);
+
     if (!_LOCALES || _LOCALES.length === 0) {
       console.error('There are no _LOCALES provided');
     }
+
     var _LOCALES_DISPLAY_NAMES = [];
     _LOCALES.forEach(function (locale) {
       _LOCALES_DISPLAY_NAMES.push(localesObj[locale]);
@@ -1826,6 +1821,11 @@ module.exports.localeService = function ($translate, LOCALES, $rootScope, tmhDyn
       // asking angular-translate to load and apply proper translations
       $translate.use(locale);
     };
+
+    // set default
+    if (!localStorage.getItem("NG_TRANSLATE_LANG_KEY"))
+      if (!!LOCALES.preferredLocale)
+        setLocale(LOCALES.preferredLocale)
 
     // EVENTS
     // on successful applying translations by angular-translate

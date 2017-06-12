@@ -25,9 +25,6 @@ function verifyEmailExist(req, res, email){
 
 function verifyPwdCorrect(req, res) {
 
-    // console.log('foo BODY ;> ',req.body)
-    // console.log('foo USER :> ',req.user)
-
     if (!!req.user && !!req.user.id) {
 
         var passTest = req.body.pwd

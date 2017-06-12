@@ -1,4 +1,4 @@
-"use strict";
+"use strict"
 
 var gulp = require('gulp')
   , connect = require('gulp-connect')
@@ -29,14 +29,13 @@ var reportError = function (error) {
 }
 
 // API REST
-
 var startLivereload = function() {
-  lr = require('tiny-lr')()
-  lr.listen(LIVERELOAD_PORT)
+
 }
 
 var notifyLivereload = function(event, fileName) {
     fileName = require('path').relative(EXPRESS_ROOT, event.path)
+   lr = require('tiny-lr')()
 
     lr.changed({
       body: {
@@ -59,25 +58,27 @@ gulp.task('protractor', function(callback) {
         .on('end', callback);
 });
 
-gulp.task('connect', function() {
-  require("./server/server")(EXPRESS_ROOT, EXPRESS_PORT)
-  startLivereload()
-});
+// gulp.task('debug', function() {
+//   gulp.src([])
+//     .pipe(nodeInspector());
+// });
 
 
 gulp.task('start', function() {
   nodemon({
-    script: 'server/server.js'
+    script : 'server/server.js'
   , watch : "server/**/*"
-  , ext: 'js html'
+  , ext: 'js hbs'
   , env: { 'NODE_ENV': 'development' }
-  })
-  require("./server/server")(EXPRESS_ROOT, EXPRESS_PORT)
-  startLivereload()
+})
+
+  //require("./server/server")(EXPRESS_ROOT, EXPRESS_PORT)
+  //startLivereload()
+
 });
 
 gulp.task('sass', function(){
-  return gulp.src('./app/sass/styles.scss')
+  return gulp.src('./app/sass/*.scss')
     .pipe(plumber({
         errorHandler: reportError
     }))
@@ -111,7 +112,7 @@ gulp.task('compress', function(){
 gulp.task('watch', function () {
   gulp.watch(['./app/**/*.js'], ['browserify'])
   gulp.watch(['./app/**/*.scss'], ['sass'])
-  gulp.watch(['./server/server.js', './public/**/*.html', './public/js/main.js', './public/css/styles.css'], notifyLivereload)
+  gulp.watch(['./public/**/*.html', './public/js/main.js', './public/css/styles.css'], notifyLivereload) //'./server/server.js',
 })
 
 gulp.task('watchTests', function () {

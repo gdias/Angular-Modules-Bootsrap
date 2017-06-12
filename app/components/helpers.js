@@ -17,3 +17,8 @@ module.exports.htmlSpecialChars = function(str) {
     : false)
 
 }
+
+module.exports.join = function(array) {
+  return (typeof array != "undefined" && array.length != 0 ? array.join("") : false)
+
+}
