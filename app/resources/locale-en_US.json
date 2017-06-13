@@ -28,7 +28,9 @@
   , "auth.signin.lostPwd.line1" : "With this page you can get a new password,"
   , "auth.signin.lostPwd.line2" : "just follow the process and click on next button"
   , "auth.signin.lostPwd.next" : "Next step"
-  
-  , "auth.signin.lostPwd.step1.line1" : "Please, to generate an new password for your account,"
+
+  , "auth.signin.lostPwd.step1.txt" : "For start process to generate a new password, enter email that you use when you sign up"
+  , "auth.signin.lostPwd.step1.btn" : "Change password"
+  , "auth.signin.lostPwd.step1.placeholder" : "Your Email"
 
 }

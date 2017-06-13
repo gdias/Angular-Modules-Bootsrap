@@ -27,6 +27,10 @@
   , "auth.signin.lostPwd.title" : "Avez-vous perdu votre mot de passe ?"
   , "auth.signin.lostPwd.line1" : "Cette page vous permettra d'en obtenir un nouveau,"
   , "auth.signin.lostPwd.line2" : "il vous suffit de suivre la procédure en cliquant sur le bouton suivant."
-  , "auth.signin.lostPwd.next" : "Prochaine étape"
-  
+  , "auth.signin.lostPwd.next" : "Etape suivante"
+
+  , "auth.signin.lostPwd.step1.txt" : "Pour démarrer le processus de renouvellement de votre mot de passe, veuillez entrer l'email que vous avez utilisé pour l'inscription"
+  , "auth.signin.lostPwd.step1.btn" : "Changer le mot de passe"
+  , "auth.signin.lostPwd.step1.placeholder" : "Votre email"
+
 }

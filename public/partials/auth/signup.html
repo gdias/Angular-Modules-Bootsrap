@@ -9,7 +9,7 @@
       <input type="email" placeholder="email" ng-model="form.email" name="email" ng-change="checkEmailExist()" required>
       <span ng-show="form.emailvalid">{{"auth.signup.validEmail" | translate}}</span>
       <div ng-show="form.exist">
-        {{"auth.signup.emailAlreadyExist" | translate}} <a href="#/signin">{{"auth.signup.signin" | translate}}</a>
+        {{"auth.signup.emailAlreadyExist" | translate}} <a href="/signin">{{"auth.signup.signin" | translate}}</a>
       </div>
     </div>
     <div ng-hide="form.exist">

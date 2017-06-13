@@ -1,8 +1,9 @@
 <div>
-  <p>Please, to generate an new password for your account,
-    start this process and enter your email adress</p>
+  <p>
+    {{"auth.signin.lostPwd.step1.txt" | translate}}
+  </p>
     <form ng-submit="renew()">
-      <input type="email" ng-model="form.mail" placeholder="your email adress" required />
-      <input type="submit" value="Renew">
+      <input type="email" ng-model="form.mail" placeholder="{{'auth.signin.lostPwd.step1.placeholder' | translate}}" required />
+      <input type="submit" value="{{'auth.signin.lostPwd.step1.btn' | translate}}">
     </form>
 </div>
