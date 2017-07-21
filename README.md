@@ -1,5 +1,5 @@
 
-##Angular modules bootstrap
+#Angular modules bootstrap
 
 I change my way of works in front-end development, and i recently make an bootstrap for start instantly an FullJS project. You have an website idea ? Clone project from github and just code it !
 
@@ -47,7 +47,7 @@ For the tests E2E with Protractor, make sure you have Java installed and last ve
 > npm install
 
 
-##Usage
+#Usage
 https://localhost:4443
 
 #### Start local server on secure port 4443
