@@ -1,7 +1,6 @@
 "use strict"
 
 var nodemailer        = require('nodemailer')
-  , smtpTransport     = require('nodemailer-smtp-transport')
   , EMAILSERVER       = "localhost"
 
 
@@ -16,6 +15,7 @@ module.exports = {
           , port: 25
         }
 
-      return nodemailer.createTransport(smtpTransport(config))
+      return nodemailer.createTransport(config)
   }
+
 }

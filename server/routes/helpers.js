@@ -1,9 +1,8 @@
 "use strict"
 
-var   nodemailer        = require('nodemailer')
-    , smtpTransport     = require('nodemailer-smtp-transport')
-    , handlebars        = require('handlebars')
-    , fs                = require('fs-promise')
+var   nodemailer = require('nodemailer')
+    , handlebars = require('handlebars')
+    , fs                = require('fs')
     , extend            = require('extend')
     , Path              = require("path")
     , Q                 = require("q")
