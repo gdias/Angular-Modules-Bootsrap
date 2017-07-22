@@ -102,7 +102,7 @@ module.exports.validateAccountController = ['$scope', '$http', '$routeParams', '
           , headers: {
             'Authorization': ['Bearer ',token].join("")
           }
-        }).success(authOk).error(authNok)
+        }).then(authOk,authNok)
 
         function authOk (data, status, headers, config){
           if (status === 200) {

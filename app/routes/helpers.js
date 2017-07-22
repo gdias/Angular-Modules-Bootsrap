@@ -20,9 +20,12 @@ function ($q, $timeout, $http, $location, $rootScope, $cookies, dfd, token) {
     , headers: {
       'Authorization': ['Bearer ', token].join("")
     }
-  }).then(function success(user) {
-    if (user !== '0' && user.status === 200) {
+  }).then(function success(response, data) {
+    if (response !== '0' && response.status === 200) {
       $rootScope.auth = true
+      data = response.data.user
+      $rootScope.admin = data.isAdmin
+      $rootScope.email = data.email
       dfd.resolve()
     } else { // Not Authenticated
       $rootScope.auth = false
@@ -55,14 +58,13 @@ function ($q, $timeout, $http, $location, $rootScope, $cookies, dfd, token) {
   if (!$cookies.get("jwt-token") && !!token)
     $cookies.put("jwt-token", token)
 
-
       $http({
           method : "GET"
         , url : "/api/auth/admin"
         , headers: {
           'Authorization': ['Bearer ', token].join("")
         }
-      }).success(function(isAdmin){
+      }).then(function success(isAdmin){
 
         if (!isAdmin)
           $location.url('/account'),
@@ -71,7 +73,7 @@ function ($q, $timeout, $http, $location, $rootScope, $cookies, dfd, token) {
         $rootScope.admin = true
         dfd.resolve()
 
-      }).error(function(err){
+      }, function error(err){
         $rootScope.admin = false
         dfd.reject()
         $location.url('/account')

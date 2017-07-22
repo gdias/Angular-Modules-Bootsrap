@@ -327,17 +327,15 @@ function validate(req, res) {
 function setAdmin(req, res) {
 
   if(!req.params.id)
-    res.sendStatus(401)
+    res.status(401)
 
-  //console.log("set this _id : ", req.params.id);
-
-  User.update({"_id" : req.params.id}, {"level" : 666}, function(err, stats){
-    if(!!err) console.log("HORROR : ",err)
+  User.update({"email" : req.params.id}, {"level" : 666}, function(err, stats){
+    if(!!err) console.log("ERROR : ",err)
 
     if(!!stats.ok)
-      res.json({msg:"This user has been updated on Admin level"})
+      res.json({ "msg" : "This user has been updated on Admin level" })
      else
-      res.sendStatus(401)
+      res.status(401)
   })
 
 
@@ -385,9 +383,13 @@ function signup(req, res) {
           if (err)
             res.json({"error" : err})
 
-    function onerror(err){
-      console.log("err : ",err);
-    }
+          // create a new token for validate account
+          tokenJWT = jwt.sign({
+            expiresIn : "2d"
+            , hash : newHash
+            , email : emailValid
+          }
+          , KEY)
 
           sendActivation(emailValid, tokenJWT).then(onsuccess, onerror)
 

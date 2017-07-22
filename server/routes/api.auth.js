@@ -20,7 +20,6 @@ router.post('/', auth)
 router.post('/rae', expressJwt({secret:KEY}), resendActivateEmail)
 
 function adminVerif(req, res) {
-
   if (!!req.user)
     User.find({"_id":req.user.id}, function(err, docs){
       var level = docs[0].level
@@ -29,6 +28,8 @@ function adminVerif(req, res) {
       else
         res.sendStatus(500)
     })
+  else
+    res.sendStatus(500)
 
 }
 
@@ -66,7 +67,7 @@ function auth (req, res) {
                 , function(err, stats){
                    if(!!err)
                       console.log("HORROR : ",err)
-                      
+
                    if(!!stats.ok)
                     res.json(tokenJWT)
                 }
@@ -118,14 +119,18 @@ function resendActivateEmail (req, res) {
 }
 
 function authValid(req, res) {
-    //console.log("/get USER with param>",req.user)
-
-    // TODO : control data
-    // if not good data
-    // remove auth and redirect by angular at Home
-
-
-    res.sendStatus(200)
+  if (!!req.user.id)
+    User.find({"_id" : req.user.id}, function(err, doc){
+      if (!!doc.length && doc.length === 1)
+        res.json({"user" : {
+            "isAdmin" : doc[0].level === 666 ? true : false
+          , "email" : doc[0].email
+        }})
+      else
+        res.sendStatus(500)
+    })
+  else
+    res.sendStatus(500)
 }
 
 

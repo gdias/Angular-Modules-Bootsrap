@@ -6,6 +6,7 @@ module.exports.accountController = [
 
     $scope.message = "Account"
     $rootScope.$emit('updateMenuEvent')
+    $scope.isAdmin = $rootScope.admin
 
   }
 ]
