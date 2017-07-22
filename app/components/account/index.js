@@ -7,7 +7,7 @@ module.exports = {
       , 'editEmailController': require("./edit/editEmailController")
       , 'emailEditValidController': require("./edit/editEmailController")
       , 'editPwdController': require("./edit/editPwdController")
-      , 'editPwdControllerValid' : require("./edit/editPwdController").editPwdControllerValid
+      , 'editPwdControllerValid': require("./edit/editPwdController").editPwdControllerValid
       , 'deleteController': require('./accountController').deleteController
     }
   , service : {

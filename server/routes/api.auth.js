@@ -64,18 +64,15 @@ function auth (req, res) {
                 { 'email' : docs[0].email }
               , { 'lastConnection' : moment().format() }
                 , function(err, stats){
-                      if(!!err) console.log("HORROR : ",err)
-
-
-                     if(!!stats.ok)
-                     res.json(tokenJWT)
+                   if(!!err)
+                      console.log("HORROR : ",err)
+                      
+                   if(!!stats.ok)
+                    res.json(tokenJWT)
                 }
             )
 
-
-
-          }
-          else {
+          } else {
             // create an other token for validate account
             tokenJWT = jwt.sign({
                 expiresIn : "2d"
@@ -87,12 +84,11 @@ function auth (req, res) {
             res.json({type:2, token:tokenJWT, error:'Account not validated'})
           }
 
-        } else {
+        } else
           res.json({type:1, error:'Bad password'})
-        }
-      } else {
+
+      } else
         res.json({type:0, error:'Please, create an account'})
-      }
   })
 }
 

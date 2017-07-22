@@ -1,16 +1,16 @@
 require('angular')
 
 var ngRoute = require('angular-route')
-    , ngCookies = require('angular-cookies')
-    , helpers = require('./routes/helpers')
-    , routes = require("./routes/routes").config
-    , ngTranslate = require('angular-translate')
-    , ngTranslateLocal = require("angular-dynamic-locale")
-    , ngTranslateLocalStorage = require("angular-translate-storage-local")
-    , ngTranslateCookie = require("angular-translate-storage-cookie")
-    , ngTranslateStatic = require("angular-translate-loader-static-files")
-    , ngTranslateHandlerLog = require("angular-translate-handler-log")
-    , app = angular.module('app', ['ngRoute', 'ngCookies', 'pascalprecht.translate', 'tmh.dynamicLocale'])
+  , ngCookies = require('angular-cookies')
+  , helpers = require('./routes/helpers')
+  , routes = require("./routes/routes").config
+  , ngTranslate = require('angular-translate')
+  , ngTranslateLocal = require("angular-dynamic-locale")
+  , ngTranslateLocalStorage = require("angular-translate-storage-local")
+  , ngTranslateCookie = require("angular-translate-storage-cookie")
+  , ngTranslateStatic = require("angular-translate-loader-static-files")
+  , ngTranslateHandlerLog = require("angular-translate-handler-log")
+  , app = angular.module('app', ['ngRoute', 'ngCookies', 'pascalprecht.translate', 'tmh.dynamicLocale'])
 
   app.config(routes)
   app.constant('LOCALES', {

@@ -20,9 +20,8 @@ function ($q, $timeout, $http, $location, $rootScope, $cookies, dfd, token) {
     , headers: {
       'Authorization': ['Bearer ', token].join("")
     }
-  }).success(function(user){
-
-    if (user !== '0'){
+  }).then(function success(user) {
+    if (user !== '0' && user.status === 200) {
       $rootScope.auth = true
       dfd.resolve()
     } else { // Not Authenticated
@@ -32,7 +31,7 @@ function ($q, $timeout, $http, $location, $rootScope, $cookies, dfd, token) {
       $location.url('/signin')
     }
 
-  }).error(function(err){
+  }, function error(err) {
     $rootScope.auth = false
     dfd.reject()
     $location.url('/signin')

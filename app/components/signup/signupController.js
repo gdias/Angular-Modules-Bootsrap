@@ -44,26 +44,25 @@ function signupController ($scope, $http, signupService, $window){
 
 
   $scope.signUpUser = function(){
-    console.log($scope.form);
 
     if (!!$scope.form.validPwdSize &&
         !!$scope.form.validPwdConfirm &&
         !!$scope.form.emailvalid &&
         !!$scope.form.validPwdNum) {
 
-      $http.post("/api/user", $scope.form).then(function(response, validateUrl){
+      $http.post("/api/user", $scope.form).then(function(response, validateUrl) {
 
-        console.log("data : ", response.data);
-
-        if (!!response.data)
+        // if (!!response.data)
           // validateUrl = [location.hostname, ":", location.port, "/#/validateAccount/", response.data.token].join("")
 
         // Change view and show message for to have send an email of confirmation
         $window.location.href = "/signup/valid"
 
-
-      }, function(err){
-        console.log(err);
+      }, function(err) {
+        $scope.error = [err.status, " : ", err.data].join("")
+        setTimeout(function(){
+          $window.location.href = "/signup"
+        }, 2000)
       })
     } else {
 

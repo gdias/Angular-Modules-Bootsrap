@@ -29,7 +29,7 @@ function renewControllerStart($scope, $http, $window){
       var t = response.data.token
 
       sessionStorage.setItem("renewVerif", JSON.stringify(btoa(t)))
-      $window.location.href = "/#/renewPassword/form"
+      $window.location.href = "/renewPassword/form"
 
       // location
     }, function(err){
@@ -68,23 +68,16 @@ module.exports.renewController = ['$scope', '$http', '$window', '$cookies', '$lo
             }
         }).then(
           function(response){
-
             // Redirect for display
             $window.location.href = (!response.data.error
-              ? "/#/renewPassword/validForm"
-              : "/#/renewPassword/validNotActive")
-
+              ? "/renewPassword/validForm"
+              : "/renewPassword/validNotActive")
           }, function(err){
             console.error(err)
           }
         )
-
-
       }
-
-      //console.log("to send this adress", $scope.form.mail)
     }
-
   }
 ]
 
@@ -191,7 +184,8 @@ function signinController ($scope, $http, $window, $cookies, $location, $rootSco
       $cookies.put("jwt-token", window.localStorage.getItem('token')) // save token
 
     // redirection vers une page securisée
-    $location.url('/account')
+    $window.location.href = "/account"
+    
   }
 
   function authNok() {

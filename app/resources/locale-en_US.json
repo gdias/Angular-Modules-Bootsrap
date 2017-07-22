@@ -5,6 +5,9 @@
   , "commons.menu.contact" : "Contact"
   , "commons.menu.signin" : "Sign in"
   , "commons.menu.signup" : "Sign up"
+  , "commons.menu.account" : "Account"
+  , "commons.menu.logout" : "Log out"
+
 
   , "auth.signup.title" : "Enter a email and password"
   , "auth.signup.validEmail" : "Email not already used"
@@ -32,5 +35,7 @@
   , "auth.signin.lostPwd.step1.txt" : "For start process to generate a new password, enter email that you use when you sign up"
   , "auth.signin.lostPwd.step1.btn" : "Change password"
   , "auth.signin.lostPwd.step1.placeholder" : "Your Email"
+
+  , "home.title" : "Negociate your next purchases"
 
 }

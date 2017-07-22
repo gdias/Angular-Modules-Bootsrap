@@ -371,30 +371,39 @@ function signup(req, res) {
 
   var user = new User(data)
 
-  user.save(function (err, tokenJWT, emailModel) {
+  // user.find({"email", data.email})
+  // console.log("email data check : ", data )
+  User.find({"email" : data.email},
+    function(err, result) {
+      // console.log(result.length);
 
-    if (err)
-      res.json({error : err})
+        // res.json({error : "Your account has already been created"})
 
-    // create a new token for validate account
-    tokenJWT = jwt.sign({
-        expiresIn : "2d"
-      , hash : newHash
-      , email : emailValid
-    }
-    , KEY)
+      if (!result.length)
+        user.save(function (err, tokenJWT, emailModel) {
 
-    sendActivation(emailValid, tokenJWT).then(onsuccess, onerror)
+          if (err)
+            res.json({"error" : err})
 
     function onerror(err){
       console.log("err : ",err);
     }
 
-    function onsuccess(){
-    res.json({msg : "Your account has been created"})
-    }
+          sendActivation(emailValid, tokenJWT).then(onsuccess, onerror)
 
-  })
+          function onerror() {
+            res.status(503).send("Internal Error, Email hasn't been sended. Please contact administrator")
+          }
+
+          function onsuccess(){
+            res.json({msg : "Your account has been created"})
+          }
+
+        })
+      else
+        res.sendStatus(409)
+    }
+  )
 }
 
 module.exports = router

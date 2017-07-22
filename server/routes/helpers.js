@@ -1,15 +1,14 @@
 "use strict"
 
-var   nodemailer = require('nodemailer')
-    , handlebars = require('handlebars')
-    , fs                = require('fs')
-    , extend            = require('extend')
-    , Path              = require("path")
-    , Q                 = require("q")
-    , mailer            = require('../config/email')
-    , validEmail        = require('../utils').validEmail
-    , User              = require("../models/user")
-    , loadtemplate
+var handlebars = require('handlebars')
+  , fs = require('fs')
+  , extend  = require('extend')
+  , Path = require("path")
+  , Q = require("q")
+  , mailer = require('../config/email')
+  , validEmail = require('../utils').validEmail
+  , User = require("../models/user")
+  , loadtemplate
 
 
 module.exports.controlAdmin = function (id) {
@@ -39,6 +38,7 @@ module.exports.sendEmail = function(model, deferred) {
 
   function onsuccess(template) {
     model.send["htmlEmail"] = template
+
     module.exports.sender(model.send)
     .then(function() {
         deferred.resolve(true)
@@ -75,20 +75,26 @@ module.exports.sender = function(sendModel, deferred, sendData, transporter) {
       html: sendModel.htmlEmail
     }
 
-    transporter = mailer.transporter()
+    try {
 
-    transporter.sendMail(sendData, function(error, info){
+      transporter = mailer.transporter()
 
-      if(!!error)
-        deferred.reject("Error : ",error)
-      else
-        deferred.resolve(info)
+      transporter.sendMail(sendData, function(error, info) {
+
+        if(!!error)
+          deferred.reject("Error : ",error)
+        else
+          deferred.resolve(info)
 
         if (!!info)
-            console.log('Message sent: ' + info.response)
-    })
+          console.log('Message sent: ' + info.response)
+      })
 
-    return deferred.promise
+    } catch (e) {
+        console.log("Error", e);
+    } finally {
+      return deferred.promise
+    }
 }
 
 module.exports.constructEmailTemplate = function (dataEmail, bodyTemplate, deferred, hbsPath) {
@@ -109,11 +115,14 @@ module.exports.constructEmailTemplate = function (dataEmail, bodyTemplate, defer
   .then(loadtemplate("body", [hbsPath, dataEmail.name, '.hbs'].join("")))
   .then(function(){
 
-    fs.readFile(__dirname + hbsPath + 'index.hbs', 'utf8', function(err, data, model, tmpl, newModel){
-      if (err)
-        deferred.reject(err)
+    fs.readFile(__dirname + hbsPath + 'index.hbs', 'utf8', function(error, data, model, tmpl, newModel) {
 
-      if (!!data){
+      if (!!error) {
+        deferred.reject(error)
+        throw error
+      }
+
+      if (!!data) {
         model = {}
 
         // Control if minimal structure required of Model is available

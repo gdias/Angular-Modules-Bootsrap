@@ -5,6 +5,8 @@
   , "commons.menu.contact" : "Contact"
   , "commons.menu.signin" : "Connexion"
   , "commons.menu.signup" : "Inscription"
+  , "commons.menu.account" : "Mon compte"
+  , "commons.menu.logout" : "Déconnexion"
 
   , "auth.signup.title" : "Veuillez entrer une adresse email et un mot de passe"
   , "auth.signup.validEmail" : "Cet email est libre"
@@ -33,4 +35,5 @@
   , "auth.signin.lostPwd.step1.btn" : "Changer le mot de passe"
   , "auth.signin.lostPwd.step1.placeholder" : "Votre email"
 
+  , "home.title" : "Négociez vos futurs achats"
 }

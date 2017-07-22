@@ -1,13 +1,12 @@
 "use strict"
 
-var nodemailer        = require('nodemailer')
-  , EMAILSERVER       = "localhost"
-
+var nodemailer = require('nodemailer')
+  , EMAILSERVER = "localhost"
 
 module.exports = {
-    sender      : "ADMIN <admin@internet.com>"
-  , server      : EMAILSERVER
-  , transporter : function(config) {
+    sender : "ADMIN <admin@internet.com>"
+  , server : EMAILSERVER
+  , transporter : function(config, resp) {
 
       if (typeof config === "undefined")
         config = {
@@ -15,7 +14,14 @@ module.exports = {
           , port: 25
         }
 
-      return nodemailer.createTransport(config)
+      try {
+        resp = nodemailer.createTransport(config)
+      } catch (e) {
+        throw e
+        console.error("ERROR : ",e)
+      } finally {
+        return resp
+      }
   }
 
 }
