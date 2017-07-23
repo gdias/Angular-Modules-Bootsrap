@@ -15,9 +15,9 @@ module.exports.adminService = ["$http", "$q", "$cookies", "$location", "$rootSco
               'Authorization': ['Bearer ',$cookies.get("jwt-token")].join("")
             }
 
-          }).success(function(data){
+          }).then(function(data){
             dfd.resolve(data)
-          }).error(function(err){
+          }, function(err){
             dfd.reject(err)
           })
 
@@ -36,10 +36,9 @@ module.exports.adminService = ["$http", "$q", "$cookies", "$location", "$rootSco
                 'Authorization': ['Bearer ',$cookies.get("jwt-token")].join("")
               }
             })
-            .success(function(data){
-              dfd.resolve(data)
-            })
-            .error(function(err){
+            .then(function okGetUserData(response){
+              dfd.resolve(response.data)
+            }, function nokGetUserData(err){
               dfd.reject(err)
             })
           else
@@ -49,7 +48,6 @@ module.exports.adminService = ["$http", "$q", "$cookies", "$location", "$rootSco
         }
 
         function updateDataUser(data) {
-
           // data represent a json object as follow : {'id':'_id', '_key':'_value'} + token
 
           var dfd = $q.defer()
@@ -70,10 +68,9 @@ module.exports.adminService = ["$http", "$q", "$cookies", "$location", "$rootSco
                 'Authorization': ['Bearer ',$cookies.get("jwt-token")].join("")
               }
             })
-            .success(function(data){
+            .then(function(data){
               dfd.resolve(data)
-            })
-            .error(function(err){
+            }, function(err){
               dfd.reject(err)
             })
 

@@ -5,7 +5,7 @@ module.exports.adminController = [
 , function($http, $q, $scope, $rootScope, adminService){
 
   $scope.msg = "ADMIN CONTROL"
-
+  $rootScope.$emit('updateMenuEvent')
   adminService.getAllUsers().then(ok, nok)
 
   function ok(d) {
@@ -13,7 +13,7 @@ module.exports.adminController = [
   }
 
   function nok(err){
-    console.log(err);
+    console.log(err)
   }
 
 }]
@@ -23,7 +23,7 @@ module.exports.adminUsersController = [
   '$http', '$q', '$scope', '$rootScope', '$routeParams', 'adminService'
 , function($http, $q, $scope, $rootScope, $routeParams, adminService){
   $scope.user = {}
-
+  $rootScope.$emit('updateMenuEvent')
   $scope.msg = "ADMIN USER CONTROL"
 
   adminService.getUser($routeParams.id).then(ok, nok)
@@ -34,6 +34,7 @@ module.exports.adminUsersController = [
   }
 
   function nok(err){
+    throw new Error(err);
     console.log(err);
   }
 

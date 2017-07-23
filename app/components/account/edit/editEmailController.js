@@ -93,7 +93,7 @@ module.exports.emailEditValidController = ['$scope', '$http', '$rootScope', '$ro
       , headers: {
         'Authorization': ['Bearer ',token].join("")
       }
-    }).success(success).error(fail)
+    }).then(success, fail)
 
   function success() {
     $scope.valid = true
@@ -106,11 +106,9 @@ module.exports.emailEditValidController = ['$scope', '$http', '$rootScope', '$ro
       interval = setInterval(function(){
         $scope.$apply(function() {
           $scope.num = --sec
-
           if (sec === 0)
             clearInterval(interval),
             accountService.logout()
-
         })
       }, 1000)
 

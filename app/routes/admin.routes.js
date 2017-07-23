@@ -22,7 +22,4 @@ module.exports.adminRoutes = (function() {
     }
   })
 
-
-
-
 })()
